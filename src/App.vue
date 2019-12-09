@@ -11,7 +11,7 @@
         solo-inverted
         flat
         hide-details
-        label="Поиск по CRM"
+        label="Поиск по CRM" 
       />
 
       <v-spacer />
