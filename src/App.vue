@@ -12,7 +12,7 @@
     </v-app-bar>
 
 
-    <v-navigation-drawer v-model="drawer" app clipped color="black lighten-4">
+    <v-navigation-drawer v-model="drawer" app clipped color="grey lighten-4">
       <v-list dense class="grey lighten-4">
 
         <template>
