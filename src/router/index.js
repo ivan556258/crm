@@ -29,6 +29,7 @@ import AppGpsMap from '../views/table/AppGpsMap.vue'
 import AppUserCompanyBillAll from '../views/table/AppUserCompanyBillAll.vue'
 import AppUserCompany from '../views/table/AppUserCompany.vue'
 import AppСontentSupport from '../views/table/AppСontentSupport.vue'
+import AppVehicleId from '../views/item/AppVehicleId.vue'
 
 Vue.use(VueRouter)
 export default new VueRouter({
@@ -179,6 +180,11 @@ export default new VueRouter({
     path: '/admin/content/support',
     name: 'Поддержка',
     component: AppСontentSupport
+  },
+  { 
+    path: '/admin/Vehicle/:id', 
+    name: 'Конкретный авто',
+    component: AppVehicleId
   }
 
 ]
