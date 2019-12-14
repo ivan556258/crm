@@ -44,6 +44,17 @@
           </v-list-item>
         </template>
         </v-list-group>
+
+         <template>
+          <v-list-item v-for="item in conatactAll" :key="item.i" router :to="item.route">
+            <v-list-item-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
     
 
         <v-list-group prepend-icon="account_circle">
@@ -175,14 +186,21 @@ export default {
         route: "/admin/VehicleSms/all",
         text: "Двигатель",
         icon: "waves"
-      }
-    ],
-    users: [
+      },
       {
         route: "/admin/VehicleOwner/all",
         text: "Владельцы",
         icon: "waves"
       },
+    ],
+    conatactAll: [
+     { 
+        route: "/admin/ContractAll",
+        text: "Договоры аренды",
+        icon: "waves"
+     },
+    ],
+    users: [
       {
         route: "/admin/UserDriverProfile/all",
         text: "Клиенты",

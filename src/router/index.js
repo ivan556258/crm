@@ -5,6 +5,7 @@ import AppVehicleAll from '../views/table/AppVehicleAll.vue'
 import AppVehicleMaintenanceAll from '../views/table/AppVehicleMaintenanceAll.vue'
 import AppVehicleSmsAll from '../views/table/AppVehicleSmsAll.vue'
 import AppVehicleOwnerAll from '../views/table/AppVehicleOwnerAll.vue'
+import AppContractAll from '../views/table/AppContractAll.vue'
 import AppUserDriverProfileAll from '../views/table/AppUserDriverProfileAll.vue'
 import AppUserProfileAll from '../views/table/AppUserProfileAll.vue'
 import AppUserCommentAll from '../views/table/AppUserCommentAll.vue'
@@ -60,6 +61,11 @@ export default new VueRouter({
     path: '/admin/VehicleOwner/all',
     name: 'Владельцы',
     component: AppVehicleOwnerAll
+  },
+  { 
+    path: '/admin/ContractAll',
+    name: 'Договоры аренды',
+    component: AppContractAll
   },
   {
     path: '/admin/UserDriverProfile/all',
@@ -185,7 +191,6 @@ export default new VueRouter({
     path: '/admin/Vehicle/:id', 
     name: 'Конкретный авто',
     component: AppVehicleId
-  }
-
+  },
 ]
 })

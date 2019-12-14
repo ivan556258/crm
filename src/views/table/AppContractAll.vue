@@ -7,7 +7,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Счета</v-toolbar-title>
+        <v-toolbar-title>Договоры аренды</v-toolbar-title>
         
         <v-spacer></v-spacer>
         
@@ -18,7 +18,7 @@
           
           <v-card>
             <v-card-title>
-              <span class="headline">Счета</span>
+              <span class="headline">Договоры аренды</span>
             </v-card-title>
 
             <v-card-text>
@@ -78,17 +78,25 @@
 
 <script>
   export default {
-    name: 'AppAccountAll',
+    name: 'AppContractAll',
     data: () => ({
       dialog: false,
       headers: [
         {
-          text: 'Название',
+          text: 'Номер',
           align: 'left',
           sortable: false,
           value: 'name',
         },
-        { text: 'Баланс', value: 'fat' },
+        { text: 'Автомобиль', value: 'fat' },
+        { text: 'Тариф', value: 'carbs' },
+        { text: 'Водитель', value: 'protein' },
+        { text: 'Телефон', value: 'action', sortable: false },
+        { text: 'Баланс', value: 'action', sortable: false },
+        { text: 'Штрафы', value: 'action', sortable: false },
+        { text: 'Депозит', value: 'action', sortable: false },
+        { text: 'Дата начала', value: 'action', sortable: false },
+        { text: 'Статус', value: 'action', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
@@ -110,7 +118,7 @@
     }),
     computed: {
       formDriveTitle () {
-        return this.editedIndex === -1 ? 'Добавить счёт' : 'Редактировать счёт'
+        return this.editedIndex === -1 ? 'Добавить договор аренды' : 'Редактировать договор аренды'
       },
     },
     watch: {
