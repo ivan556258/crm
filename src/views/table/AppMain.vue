@@ -6,7 +6,10 @@
     class="elevation-1"
   >
     <template v-slot:top>
+        <v-toolbar-title class="ml-3 mt-2">Панель управления</v-toolbar-title>
+        <v-spacer></v-spacer>
 <div class="d-flex">
+
 <v-card
     class="text-right ml-3 mt-2"
     max-width="314"
@@ -14,7 +17,6 @@
   >
     <v-list-item three-line>
       <v-list-item-content>
-        <div class="overline ml-2">OVERLINE</div>
         <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
         <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
       </v-list-item-content>
@@ -32,7 +34,6 @@
   >
     <v-list-item three-line>
       <v-list-item-content>
-        <div class="overline ml-2">OVERLINE</div>
         <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
         <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
       </v-list-item-content>
@@ -51,7 +52,6 @@
   >
     <v-list-item three-line>
       <v-list-item-content>
-        <div class="overline ml-2">OVERLINE</div>
         <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
         <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
       </v-list-item-content>
@@ -70,7 +70,6 @@
   >
     <v-list-item three-line>
       <v-list-item-content>
-        <div class="overline ml-2">OVERLINE</div>
         <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
         <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
       </v-list-item-content>
@@ -84,10 +83,8 @@
 </div>
   
       <v-toolbar flat color="white">
-        <v-toolbar-title>Панель управления</v-toolbar-title>
-        
+        <v-toolbar-title>Договоры аренды</v-toolbar-title>
         <v-spacer></v-spacer>
-        
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
@@ -96,7 +93,7 @@
           
           <v-card>
             <v-card-title>
-              <span class="headline">Панель управления</span>
+              <span class="headline">Договоры аренды</span>
             </v-card-title>
 
             <v-card-text>
