@@ -32,6 +32,9 @@ import AppUserCompany from '../views/table/AppUserCompany.vue'
 import AppСontentSupport from '../views/table/AppСontentSupport.vue'
 import AppVehicleId from '../views/item/AppVehicleId.vue'
 import AppUserDriverProfileСreate from '../views/item/AppUserDriverProfileСreate.vue'
+import AppVehicleСreate from '../views/item/AppVehicleСreate.vue'
+import AppVehicleMaintenanceCreate from '../views/item/AppVehicleMaintenanceCreate.vue'
+import AppVehicleOwnerCreate from '../views/item/AppVehicleOwnerCreate.vue'
 
 Vue.use(VueRouter)
 export default new VueRouter({
@@ -197,6 +200,21 @@ export default new VueRouter({
     path: '/admin/UserDriverProfile/create', 
     name: 'Добавляем водителя',
     component: AppUserDriverProfileСreate
+  },
+  { 
+    path: '/admin/auto/create', 
+    name: 'Добавляем авто',
+    component: AppVehicleСreate
+  },
+  { 
+    path: '/admin/VehicleMaintenance/create', 
+    name: 'Добавление записи т.о.',
+    component: AppVehicleMaintenanceCreate
+  },
+  {
+    path: '/admin/VehicleOwner/create', 
+    name: 'Добавление владельца',
+    component: AppVehicleOwnerCreate
   },
 ]
 })

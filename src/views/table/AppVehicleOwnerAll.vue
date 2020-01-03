@@ -13,7 +13,7 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="my-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
+            <v-btn color="primary" class="my-2 ml-1" to="/admin/VehicleOwner/create">{{formDriveTitle}}</v-btn>
           </template>
           
           <v-card>

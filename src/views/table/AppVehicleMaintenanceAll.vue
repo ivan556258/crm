@@ -53,8 +53,7 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" v-on="on">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" to="/admin/VehicleMaintenance/create">{{formDriveTitle}}</v-btn>
           </template>
           
           <v-card>
@@ -159,10 +158,7 @@
     }),
     computed: {
       formDriveTitle () {
-        return this.editedIndex === -1 ? 'Добавить водителя' : 'Редактировать водителя'
-      },
-      formAutoTitle () {
-        return this.editedIndex === -1 ? 'Добавить договор' : 'Редактировать договор'
+        return 'Добавление записи т.о. '
       },
     },
     watch: {

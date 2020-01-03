@@ -11,11 +11,7 @@
         
         <v-spacer></v-spacer>
         
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="my-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-          </template>
-          
+        <v-dialog v-model="dialog" max-width="100%">          
           <v-card>
             <v-card-title>
               <span class="headline">Двигатель</span>
