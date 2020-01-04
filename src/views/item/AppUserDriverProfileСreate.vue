@@ -7,43 +7,9 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" v-on="on">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" >{{formAutoTitle}}</v-btn>
           </template>
-          
-          <v-card>
-            <v-card-title>
-              <span class="headline">Добавление водителя</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
         </v-dialog>    
     </v-toolbar>
 
@@ -73,9 +39,8 @@
           md="8"
         >
           <v-text-field
-            v-model="firstname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="lastname"
+            :counter="150"
             label="Фамилия"
             required
           ></v-text-field>
@@ -86,42 +51,39 @@
           md="8"
         >
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="firstname"
+            :counter="150"
             label="Имя"
             required
           ></v-text-field>
         </v-col>
 
-        <v-col
-          cols="12"
-          md="8"
-        >
+        <v-col cols="12" md="8">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="fathername"
+            :counter="150"
             label="Отчество"
             required
           ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="8">
            <v-select :items="status" v-model="status" label="Статус"></v-select>
-
-        </v-col>
+          </v-col>
          <v-col cols="12" md="12">
           <v-toolbar-title>Паспортные данные, удостоверение личности</v-toolbar-title>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="seriaAndNumberPassport"
+            :counter="10"
             label="Серия и номер"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="beginmenu"
-                      v-model="beginmenu"
+                      ref="brithdaymenu"
+                      v-model="brithdaymenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -129,7 +91,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="begindate"
+                          v-model="brithday"
                           label="Дата рождения"
                           clearable
                           readonly
@@ -137,8 +99,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="picker"
-                        v-model="begindate"
+                        ref="brithdaypicker"
+                        v-model="brithday"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -146,24 +108,24 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="issued"
+            :counter="200"
             label="Выдан"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="codePollicia"
+            :counter="14"
             label="Код подразделения"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="beginmenu"
-                      v-model="beginmenu"
+                      ref="dateIssuedMenu"
+                      v-model="dateIssuedMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -171,7 +133,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="begindate"
+                          v-model="dateIssuedDate"
                           label="Дата выдачи"
                           clearable
                           readonly
@@ -179,8 +141,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="picker"
-                        v-model="begindate"
+                        ref="dateIssuedPicker"
+                        v-model="dateIssuedDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -188,27 +150,27 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="locationBrithday"
+            :counter="125"
             label="Место рождения"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="addressRegistration"
+            :counter="125"
             label="Адрес регистрации"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Является собственником"></v-switch>
+           <v-switch v-model="isOwner" class="ma-2" label="Является собственником"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="inn"
+            :counter="25"
             label="СНИЛС / ИИН"
             required
           ></v-text-field> 
@@ -218,8 +180,8 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="phone"
+            :counter="25"
             label="Телефон"
             required
           ></v-text-field> 
@@ -227,23 +189,23 @@
          <v-col cols="12" md="6">
           <v-text-field
             v-model="email"
-            :rules="emailRules"
+            :counter="25"
             label="E-mail"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="addressInLifes"
+            :counter="250"
             label="Адрес фактического проживания"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="moreContacts"
+            :counter="500"
             label="Дополнительные контакты"
             required
           ></v-text-field> 
@@ -252,28 +214,28 @@
           <v-toolbar-title>Данные водителя</v-toolbar-title>
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Иностранное водительское удостоверение"></v-switch>
+           <v-switch v-model="foreginDriversLicence" class="ma-2" label="Иностранное водительское удостоверение"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="classInsurance"
+            :counter="50"
             label="Класс страховки"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="numberDriverLicence"
+            :counter="50"
             label="Номер ВУ"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="beginmenu"
-                      v-model="beginmenu"
+                      ref="dateIssuedDriverLicenceMenu"
+                      v-model="dateIssuedDriverLicenceMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -281,7 +243,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="begindate"
+                          v-model="dateIssuedDriverLicenceDate"
                           label="Дата выдачи ВУ"
                           clearable
                           readonly
@@ -289,28 +251,28 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="picker"
-                        v-model="begindate"
+                        ref="dateIssuedDriverLicencePicker"
+                        v-model="dateIssuedDriverLicenceDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
                   </v-menu>
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Имеется личный автомобиль"></v-switch>
+           <v-switch v-model="isSelfCar" class="ma-2" label="Имеется личный автомобиль"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="carBrandAndNumber"
+            :counter="100"
             label="Марка авто и номер"
             required
           ></v-text-field> 
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="rating"
+            :counter="50"
             label="Рейтинг"
             required
           ></v-text-field> 
@@ -320,8 +282,8 @@
          </v-col>
           <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="commentaries"
+            :counter="450"
             label="Комментарий"
             required
           ></v-text-field> 
@@ -342,27 +304,27 @@
                 <v-toolbar-title>SMS</v-toolbar-title>
           </v-col>
           <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Информировать водителя при изменении баланса счета"></v-switch>
+           <v-switch v-model="informDriverBalanceChanges" class="ma-2" label="Информировать водителя при изменении баланса счета"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Информировать о необходимости пополнить счет при балансе меньше нуля"></v-switch>
+           <v-switch v-model="informDriverBalanceLittle" class="ma-2" label="Информировать о необходимости пополнить счет при балансе меньше нуля"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Информировать о новых штрафах ГИБДД"></v-switch>
+           <v-switch v-model="informDriverNewPenalty" class="ma-2" label="Информировать о новых штрафах ГИБДД"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Информировать о необходимости замены масла"></v-switch>
+           <v-switch v-model="informDriverOilChange" class="ma-2" label="Информировать о необходимости замены масла"></v-switch>
          </v-col>
           <v-col cols="12" md="12">
                 <v-toolbar-title>Блокировка автомобиля</v-toolbar-title>
           </v-col>
           <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Разрешение блокировки"></v-switch>
+           <v-switch v-model="allowedBlocked" class="ma-2" label="Разрешение блокировки"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
+            v-model="thresholdBalanceForDriver"
+            :counter="6"
             label="Пороговый баланс водителя"
             required
           ></v-text-field> 
@@ -371,7 +333,7 @@
                 <v-toolbar-title>Yandex API</v-toolbar-title>
           </v-col>
           <v-col cols="12" md="6">
-           <v-switch v-model="continues" class="ma-2" label="Включить автоматические списания арендной платы с диспетчерской"></v-switch>
+           <v-switch v-model="onAutomaticRentMoney" class="ma-2" label="Включить автоматические списания арендной платы с диспетчерской"></v-switch>
          </v-col>
                </v-row>
     </v-container>
@@ -390,26 +352,61 @@
     name: 'AppVehicleId',
     data () {
       return {
+        valid: false,
         tabs: null,
-        status: ["Foo", "Bar", "Fizz", "Buzz"],
+        lastname: null,
+        firstname: null,
+        fathername: null,
+        seriaAndNumberPassport: null,
+        locationBrithday: null,
+        addressRegistration: null,
+        isOwner: false,
+        phone: null,
+        email: null,
+        inn: null,
+        classInsurance: null,
+        numberDriverLicence: null,
+        dateIssuedDriverLicenceMenu: null,
+        dateIssuedDriverLicenceDate: null,
+        addressInLifes: null,
+        moreContacts: null,
+        foreginDriversLicence: false,
+        isSelfCar: false,
+        carBrandAndNumber: null,
+        rating: null,
+        commentaries: null,
+        brithdaymenu: null,
+        informDriverBalanceChanges: false,
+        informDriverBalanceLittle: false,
+        informDriverNewPenalty: false,
+        informDriverOilChange: false,
+        allowedBlocked: false,
+        onAutomaticRentMoney: false,
+        thresholdBalanceForDriver: null,
+        dateIssuedMenu: null,
+        dateIssuedDate: null,
+        brithday: null,
+        issued: null,
+        codePollicia: null,
+        brithdaypicker: new Date().toISOString(),
+        dateIssuedPicker: new Date().toISOString(),
+        dateIssuedDriverLicencePicker: new Date().toISOString(),
+        status: [
+          "активный", 
+          "заблокированный", 
+          "проверенный", 
+          "удалённый", 
+          "неактивный", 
+          "предрегистрация", 
+          "предрегистрация", 
+          "предрегистрация",
+          "непроверенный",
+          "передан на взыскание"
+          ],
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         dialog: false,
       editedIndex: -1,
-      picker: new Date().toISOString().substr(0, 10),
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
+      picker: new Date().toISOString(),
       }
     },
     computed: {

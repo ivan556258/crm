@@ -37,54 +37,48 @@
       <v-row>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="name"
+            :counter="250"
             label="Название"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="phone"
+            :counter="20"
             label="Телефон"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="contactPerson"
+            :counter="250"
             label="Контактное лицо"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="proceedings"
+            :counter="100"
             label="Реквизиты"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="groundsForContract"
+            :counter="300"
             label="Основание для договора"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="additionContract"
+            :counter="500"
             label="Дополнительно для договора"
             required
           ></v-text-field>
@@ -94,52 +88,44 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="percentageRevenue"
+            :counter="3"
             label="% выручки"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="profitInterest"
+            :counter="3"
             label="% прибыли"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="perDay"
+            :counter="6"
             label="В день"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="perMounth"
+            :counter="6"
             label="В месяц"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="lastname"
-            :rules="nameRules"
-            :counter="10"
+            v-model="conditionJobs"
+            :counter="500"
             label="Условия работы"
             required
           ></v-text-field>
         </v-col>
-          
-           
-    
       </v-row>
     </v-container>
   </v-form>
@@ -160,32 +146,27 @@
       return {
         tabs: null,
         status: ["Foo", "Bar", "Fizz", "Buzz"],
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        valid: false,
         dialog: false,
-      editedIndex: -1,
-      picker: new Date().toISOString(),
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
+        name: null,
+        phone: null,
+        contactPerson: null,
+        proceedings: null,
+        groundsForContract: null,
+        additionContract: null,
+        percentageRevenue: null,
+        profitInterest: null,
+        perDay: null,
+        perMounth: null,
+        conditionJobs: null,
       }
     },
     computed: {
       formDriveTitle () {
-        return this.editedIndex === -1 ? 'Сохранить и выйти' : 'Редактировать и выйти'
+        return 'Сохранить и выйти'
       },
       formAutoTitle () {
-        return this.editedIndex === -1 ? 'Сохранить' : 'Редактировать'
+        return'Сохранить'
       },
     },
     watch: {
