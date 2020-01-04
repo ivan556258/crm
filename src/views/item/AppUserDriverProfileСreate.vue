@@ -8,7 +8,7 @@
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" >{{formAutoTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn>
           </template>
         </v-dialog>    
     </v-toolbar>
@@ -31,7 +31,6 @@
         <v-card flat>
           <v-card-text>
             <template>
-  <v-form v-model="valid">
     <v-container>
       <v-row>
         <v-col
@@ -290,7 +289,6 @@
          </v-col>
       </v-row>
     </v-container>
-  </v-form>
 </template>
           </v-card-text>
         </v-card>
@@ -348,11 +346,11 @@
 </template>
 
 <script>
+  import axios from "axios"
   export default {
     name: 'AppVehicleId',
     data () {
       return {
-        valid: false,
         tabs: null,
         lastname: null,
         firstname: null,
@@ -454,12 +452,36 @@
         }, 300)
       },
       save () {
-        if (this.editedIndex > -1) {
+        /* if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
           this.desserts.push(this.editedItem)
         }
-        this.close()
+        this.close() */
+        console.log(this.lastname);
+        console.log(this.informDriverBalanceChanges);
+        
+          axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertContractData',
+          data: {
+            number: this.number,
+            driver: this.driver,
+            auto: this.autos,
+            tariff: this.tariff,
+            begindate: this.begindate,
+            enddate: this.enddate,
+            continues: this.continues,
+            moreInfo: this.moreInfo,
+            status: this.status
+          }
+        })
+      .then(function(){
+        console.log('SUCCESS!!')
+      })
+      .catch(function(){
+        console.log('FAILURE!!')
+      })
       },
     },
   }
