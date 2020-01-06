@@ -7,8 +7,8 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" v-on="on">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
           </template>
           
 
@@ -32,7 +32,6 @@
         <v-card flat>
           <v-card-text>
             <template>
-  <v-form v-model="valid">
     <v-container>
       <v-row>
         <v-col cols="12" md="8">
@@ -128,7 +127,6 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-form>
 </template>
           </v-card-text>
         </v-card>
@@ -140,13 +138,13 @@
 </template>
 
 <script>
+import axios from "axios";
   export default {
     name: 'AppVehicleId',
     data () {
       return {
         tabs: null,
         status: ["Foo", "Bar", "Fizz", "Buzz"],
-        valid: false,
         dialog: false,
         name: null,
         phone: null,
@@ -209,7 +207,23 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+         axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertOwnerData',
+          data: {
+              name: this.name,
+              phone: this.phone,
+              contactPerson: this.contactPerson,
+              proceedings: this.proceedings,
+              groundsForContract: this.groundsForContract,
+              additionContract: this.additionContract,
+              percentageRevenue: this.percentageRevenue,
+              profitInterest: this.profitInterest,
+              perDay: this.perDay,
+              perMounth: this.perMounth,
+              conditionJobs: this.conditionJobs,
+          }
+         })
         }
         this.close()
       },

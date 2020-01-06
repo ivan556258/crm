@@ -7,8 +7,8 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" v-on="on">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
           </template>
           
 
@@ -33,7 +33,6 @@
         <v-card flat>
           <v-card-text>
             <template>
-  <v-form v-model="valid">
     <v-container>
       <v-row>
           <v-col cols="12" md="8">
@@ -125,7 +124,6 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-form>
 </template>
           </v-card-text>
         </v-card>
@@ -207,13 +205,13 @@
 </template>
 
 <script>
+import axios from "axios";
   export default {
     name: 'AppVehicleId',
     data () {
       return {
         tabs: null,
         status: ["Foo", "Bar", "Fizz", "Buzz"],
-        valid: false,
         auto: null,
         typeJob: null,
         autoRun: null,
@@ -244,7 +242,7 @@
         dateDate: null,
         datePicker: new Date().toISOString(),
         dialog: false,
-      editedIndex: -1,
+        editedIndex: -1,
       }
     },
     computed: {
@@ -295,7 +293,39 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+        axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertOwnerData',
+          data: {
+              auto: this.auto,
+              typeJob: this.typeJob,
+              autoRun: this.autoRun,
+              listJobs: this.listJobs,
+              contragent: this.contragent,
+              statestatePassengerSeat: this.statestatePassengerSeat,
+              resultDyagnostic: this.resultDyagnostic,
+              coastSparePart: this.coastSparePart,
+              coastJobs: this.coastJobs,
+              statusRes: this.statusRes,
+              tyreBrand: this.tyreBrand,
+              bodyCabineDamage: this.bodyCabineDamage,
+              autoCleanliness: this.autoCleanliness,
+              overallInteriorCleanliness: this.overallInteriorCleanliness,
+              stateCeling: this.stateCeling,
+              statePassengerSeat: this.statePassengerSeat,
+              stateDriverSeat: this.stateDriverSeat,
+              stateSeatbelt: this.stateSeatbelt,
+              stateSteeringWheelAndSwitches: this.stateSteeringWheelAndSwitches,
+              statePanel: this.statePanel,
+              stateSwitchKPP: this.stateSwitchKPP,
+              windscreenCondition: this.windscreenCondition,
+              stateLeftwindscreen: this.stateLeftwindscreen,
+              trunkCondition: this.trunkCondition,
+              stateTyre: this.stateTyre,
+              foreginLicenceRegistration: false,
+              datePicker: this.datePicker,
+          }
+        })
         }
         this.close()
       },
