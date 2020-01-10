@@ -24,20 +24,35 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                  <v-col cols="12" md="4">
+                    <v-select :items="status" v-model="editedItem.type" label="Тип"></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                    <v-text-field v-model="editedItem.email" label="E-mail"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.login" label="Логин"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.password" label="Пароль"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.lastName" label="Фамилия"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.name" label="Имя"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.fatherName" label="Отчество"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.phone" label="Телефон"></v-text-field>
+                  </v-col>
+                   <v-col cols="12" md="4">
+                    <v-select :items="status" v-model="editedItem.statusRes" label="Статус"></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.groundsForContract" label="Основание для договора"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -45,19 +60,13 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="close">Отмена</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
-
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -77,10 +86,23 @@
 </template>
 
 <script>
+  import axios from "axios"
   export default {
     name: 'AppUserProfileAll',
     data: () => ({
       dialog: false,
+      status: [
+          "активный", 
+          "заблокированный", 
+          "проверенный", 
+          "удалённый", 
+          "неактивный", 
+          "предрегистрация", 
+          "предрегистрация", 
+          "предрегистрация",
+          "непроверенный",
+          "передан на взыскание"
+          ],
       headers: [
         {
           text: 'ID',
@@ -98,11 +120,16 @@
       desserts: [],
       editedIndex: -1,
       editedItem: {
+        type: '',
+        email: '',
+        login: '',
+        password: '',
+        lastName: '',
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        fatherName: '',
+        phone: '',
+        statusRes: '',
+        groundsForContract: '',
       },
       defaultItem: {
         name: '',
@@ -220,6 +247,22 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertUserProfileData',
+          data: {
+                  type: this.editedItem.type,
+                  email: this.editedItem.email,
+                  login: this.editedItem.login,
+                  password: this.editedItem.password,
+                  lastName: this.editedItem.lastName,
+                  name: this.editedItem.name,
+                  fatherName: this.editedItem.fatherName,
+                  phone: this.editedItem.phone,
+                  statusRes: this.editedItem.statusRes,
+                  groundsForContract: this.editedItem.groundsForContract,
+          }
+          })
           this.desserts.push(this.editedItem)
         }
         this.close()

@@ -25,19 +25,77 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                    <v-text-field v-model="editedItem.number" label="Номер"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select :items="status" v-model="editedItem.driver" label="Водитель"></v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select :items="status" v-model="editedItem.auto" label="Автомобиль"></v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select :items="status" v-model="editedItem.tariff" label="Тариф"></v-select>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-menu
+                      ref="dateStartMenu"
+                      v-model="dateStartMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="dateStartDate"
+                          label="Дата начала"
+                          clearable
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        ref="dateStartPicker"
+                        v-model="dateStartDate"
+                        max="2050-01-01"
+                        min="1950-01-01"
+                      ></v-date-picker>
+                  </v-menu>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-menu
+                      ref="dateEndMenu"
+                      v-model="dateEndMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="dateEndDate"
+                          label="Дата окончания"
+                          clearable
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        ref="dateEndPicker"
+                        v-model="dateEndDate"
+                        max="2050-01-01"
+                        min="1950-01-01"
+                      ></v-date-picker>
+                  </v-menu>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                      <v-switch v-model="editedItem.extendedBy" class="ma-2" label="Продлеваемый"></v-switch>
+                  </v-col>
+                  <v-col cols="12" sm="4" md="4">
+                    <v-text-field v-model="editedItem.moreInfo" label="Дополнительная информация"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.statusRes" label="Статус"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -45,19 +103,13 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="close">Отмена</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
-
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -66,10 +118,7 @@
       >
         edit
       </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
+      <v-icon small @click="deleteItem(item)">
         delete
       </v-icon>
     </template>
@@ -77,6 +126,7 @@
 </template>
 
 <script>
+  import axios from "axios"
   export default {
     name: 'AppContractAll',
     data: () => ({
@@ -99,14 +149,34 @@
         { text: 'Статус', value: 'action', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
+        status: [
+          "активный", 
+          "заблокированный", 
+          "проверенный", 
+          "удалённый", 
+          "неактивный", 
+          "предрегистрация", 
+          "предрегистрация", 
+          "предрегистрация",
+          "непроверенный",
+          "передан на взыскание"
+          ],
       desserts: [],
       editedIndex: -1,
+      dateStartDate: "",
+      dateStartMenu: "",
+      dateEndDate: "",
+      dateEndMenu: "",
+      dateStartPicker: "",
+      dateEndPicker: "",
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        number: '',
+        driver: 0,
+        auto: 0,
+        tariff: 0,
+        extendedBy: 0,
+        moreInfo: 0,
+        statusRes: 0,
       },
       defaultItem: {
         name: '',
@@ -224,6 +294,21 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertContractRentData',
+          data: {
+              dateStartPicker: this.dateStartPicker,
+              dateEndPicker: this.dateEndPicker,
+              number: this.editedItem.number,
+              driver: this.editedItem.driver,
+              auto: this.editedItem.auto,
+              tariff: this.editedItem.tariff,
+              extendedBy: this.editedItem.extendedBy,
+              moreInfo: this.editedItem.moreInfo,
+              statusRes: this.editedItem.statusRes,
+          }
+          })
           this.desserts.push(this.editedItem)
         }
         this.close()

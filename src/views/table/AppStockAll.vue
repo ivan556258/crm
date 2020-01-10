@@ -28,7 +28,7 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" v-on="on">Добавление номенклатуры</v-btn>
           </template>
           
           <v-card>
@@ -40,19 +40,13 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                    <v-text-field v-model="editedItem.name" label="Название"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                    <v-text-field v-model="editedItem.brand" label="Бренд"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.article" label="Артикул"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -60,19 +54,13 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="close">Закрыть</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
-
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -92,6 +80,7 @@
 </template>
 
 <script>
+import axios from "axios"
   export default {
     name: 'AppStockAll',
     data: () => ({
@@ -114,10 +103,8 @@
       editedIndex: -1,
       editedItem: {
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        brand: '',
+        article: '',
       },
       defaultItem: {
         name: '',
@@ -127,11 +114,6 @@
         protein: 0,
       },
     }),
-    computed: {
-      formDriveTitle () {
-        return this.editedIndex === -1 ? 'Добавить' : 'Редактировать'
-      },
-    },
     watch: {
       dialog (val) {
         val || this.close()
@@ -235,6 +217,15 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+           axios({
+              method: 'post',
+              url: 'http://localhost:8081/insertStockData',
+              data: {
+                  name: this.editedItem.name,
+                  brand: this.editedItem.brand,
+                  article: this.editedItem.article,
+              }
+           })
           this.desserts.push(this.editedItem)
         }
         this.close()

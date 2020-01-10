@@ -24,20 +24,37 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                  <v-col cols="12" md="6">
+                    <v-switch v-model="editedItem.driver" class="ma-2" label="Клиент"></v-switch>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.comment" label="Комментарий"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-col cols="12" md="6">
+                  <v-menu
+                      ref="dateMenu"
+                      v-model="dateMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="dateDate"
+                          label="Уведомить"
+                          clearable
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        ref="datePicker"
+                        v-model="dateDate"
+                        max="2050-01-01"
+                        min="1950-01-01"
+                      ></v-date-picker>
+                  </v-menu>
                   </v-col>
                 </v-row>
               </v-container>
@@ -45,8 +62,8 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="close">Закрыть</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -77,10 +94,14 @@
 </template>
 
 <script>
+  import axios from "axios"
   export default {
     name: 'AppUserCommentAll',
     data: () => ({
       dialog: false,
+      dateMenu: '',
+      dateDate: '',
+      datePicker: '',
       headers: [
         {
           text: 'Время создания',
@@ -98,18 +119,12 @@
       desserts: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        driver: '',
+        comment: '',
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+         driver: '',
+        comment: '',
       },
     }),
     computed: {
@@ -220,6 +235,15 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertUserCommentData',
+          data: {
+            datePicker: this.datePicker,
+            driver: this.editedItem.driver,
+            comment: this.editedItem.comment,
+          }
+          })
           this.desserts.push(this.editedItem)
         }
         this.close()

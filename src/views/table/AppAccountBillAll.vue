@@ -11,33 +11,33 @@
         
         <v-spacer></v-spacer>
         
-        <v-dialog v-model="dialog" max-width="100%">
+        <v-dialog v-model="dialogPlus" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="my-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="my-2 ml-1" v-on="on">Пополнить</v-btn>
           </template>
           
           <v-card>
             <v-card-title>
-              <span class="headline">Приход-расход</span>
+              <span class="headline">Добавление транзакции (Пополнить)</span>
             </v-card-title>
 
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                  <v-col cols="12" md="6">
+                      <v-select :items="status" v-model="editedItem.cash" label="Счет"></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                  <v-col cols="12" md="6">
+                      <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.summ" label="Сумма"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.description" label="Описание"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-col cols="12" md="8">
+                      <v-switch v-model="editedItem.addTransaction" class="ma-2" label="Провести транзакцию"></v-switch>
                   </v-col>
                 </v-row>
               </v-container>
@@ -45,19 +45,53 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="closePlus">Закрыть</v-btn>
+              <v-btn color="blue darken-1" text @click="savePlus">Сохранить</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="dialogMinus" max-width="100%">
+          <template v-slot:activator="{ on }">
+            <v-btn color="error" class="my-2 ml-1" v-on="on">Списать</v-btn>
+          </template>
+          
+          <v-card>
+            <v-card-title>
+              <span class="headline">Добавление транзакции (Списать)</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="6">
+                      <v-select :items="status" v-model="editedItem.cash" label="Счет"></v-select>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                      <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.summ" label="Сумма"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="editedItem.description" label="Описание"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="8">
+                      <v-switch v-model="editedItem.addTransaction" class="ma-2" label="Провести транзакцию"></v-switch>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeMinus">Закрыть</v-btn>
+              <v-btn color="blue darken-1" text @click="saveMinus">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
-
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -77,10 +111,13 @@
 </template>
 
 <script>
+import axios from "axios";
   export default {
     name: 'AppAccountBillAll',
     data: () => ({
-      dialog: false,
+      dialogPlus: false,
+      dialogMinus: false,
+      status: ["Foo", "Bar", "Fizz", "Buzz"],
       headers: [
         {
           text: 'Счет',
@@ -99,11 +136,12 @@
       desserts: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        cash: '',
+        item: '',
+        summ: '',
+        description: '',
+        protein: '',
+        addTransaction: '',
       },
       defaultItem: {
         name: '',
@@ -210,17 +248,58 @@
         const index = this.desserts.indexOf(item)
         confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
       },
-      close () {
-        this.dialog = false
+      closePlus () {
+        this.dialogPlus = false
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
       },
-      save () {
+      closeMinus () {
+        this.dialogMinus = false
+        setTimeout(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        }, 300)
+      },
+      savePlus () {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          axios({
+            method: "post",
+            url: "http://localhost:8081/insertAccountBillData",
+            data:{
+                cash: this.editedItem.cash,
+                item: this.editedItem.item,
+                summ: this.editedItem.summ,
+                description: this.editedItem.description,
+                protein: this.editedItem.protein,
+                addTransaction: this.editedItem.addTransaction,
+                statusCash: 1
+            }
+          })
+          this.desserts.push(this.editedItem)
+        }
+        this.close()
+      },
+      saveMinus () {
+        if (this.editedIndex > -1) {
+          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        } else {
+          axios({
+            method: "post",
+            url: "http://localhost:8081/insertAccountBillData",
+            data:{
+                cash: this.editedItem.cash,
+                item: this.editedItem.item,
+                summ: this.editedItem.summ,
+                description: this.editedItem.description,
+                protein: this.editedItem.protein,
+                addTransaction: this.editedItem.addTransaction,
+                statusCash: 0 // если списываем
+            }
+          })
           this.desserts.push(this.editedItem)
         }
         this.close()

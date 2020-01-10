@@ -24,40 +24,33 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
+                  <v-col cols="12" md="8">
+                        <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                  <v-col cols="12" md="8">
+                        <v-select :items="status" v-model="editedItem.score" label="Счёт"></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                  <v-col cols="12" sm="6" md="8">
+                    <v-text-field v-model="editedItem.summ" label="Cумма"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                  <v-col cols="12" sm="6" md="8">
+                    <v-text-field v-model="editedItem.description" label="Описание"></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-col cols="12" md="8">
+                        <v-switch v-model="editedItem.addTransaction" class="ma-2" label="Провести транзакцию"></v-switch>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
-
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="close">Закрыть</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
     </template>
-
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -77,10 +70,12 @@
 </template>
 
 <script>
+import axios from "axios"
   export default {
     name: 'AppBillAll',
     data: () => ({
       dialog: false,
+      status: ["Foo", "Bar", "Fizz", "Buzz"],
       headers: [
         {
           text: 'ФИО',
@@ -99,18 +94,18 @@
       desserts: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        item: '',
+        score: '',
+        summ: '',
+        description: '',
+        addTransaction: '',
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        item: '',
+        score: '',
+        summ: '',
+        description: '',
+        addTransaction: '',
       },
     }),
     computed: {
@@ -221,6 +216,17 @@
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          axios({
+          method: 'post',
+          url: 'http://localhost:8081/insertOwnerData',
+          data: {
+              item: this.editedItem.item,
+              score: this.editedItem.score,
+              summ: this.editedItem.summ,
+              description: this.editedItem.description,
+              addTransaction: this.editedItem.addTransaction,
+          }
+          })
           this.desserts.push(this.editedItem)
         }
         this.close()
