@@ -7,8 +7,8 @@
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" v-on="on">{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" v-on="on">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
           </template>
         </v-dialog>    
     </v-toolbar>
@@ -40,7 +40,7 @@
       <v-row>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="name"
+            v-model="editedItem.name"
             :counter="10"
             label="Название"
             required
@@ -49,7 +49,7 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="city"
+            v-model="editedItem.city"
             :counter="10"
             label="Город"
             required
@@ -58,7 +58,7 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="address"
+            v-model="editedItem.address"
             :counter="250"
             label="Адрес"
             required
@@ -67,7 +67,7 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="email"
+            v-model="editedItem.email"
             label="E-mail"
             :counter="250"
             required
@@ -76,7 +76,7 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="phone"
+            v-model="editedItem.phone"
             :counter="16"
             label="Телефон"
             required
@@ -85,7 +85,7 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="phoneSTO"
+            v-model="editedItem.phoneSTO"
             :counter="16"
             label="Телефон СТО"
             required
@@ -101,47 +101,47 @@
         <v-card flat>
           <v-card-text>
             <v-col cols="12" md="8">
-                    <v-switch v-model="onTurnSMS" class="ma-2" label="Включить SMS оповещения в автопрокате"></v-switch>
+                    <v-switch v-model="editedItem.onTurnSMS" class="ma-2" label="Включить SMS оповещения в автопрокате"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
-                    <v-switch v-model="sendHello" class="ma-2" label="Отправлять приветствие при создании договора"></v-switch>
+                    <v-switch v-model="editedItem.sendHello" class="ma-2" label="Отправлять приветствие при создании договора"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="templeteSMSOne"
+                v-model="editedItem.templeteSMSOne"
                 :counter="300"
                 label="Шаблон SMS"
                 required
             ></v-text-field>
             </v-col>
             <v-col cols="12" md="8">
-                    <v-switch v-model="informAboutAddScore" class="ma-2" label="Информировать о необходимости пополнить счет при балансе меньше нуля"></v-switch>
+                    <v-switch v-model="editedItem.informAboutAddScore" class="ma-2" label="Информировать о необходимости пополнить счет при балансе меньше нуля"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="templeteSMSTwo"
+                v-model="editedItem.templeteSMSTwo"
                 :counter="300"
                 label="Шаблон SMS"
                 required
             ></v-text-field>
             </v-col>
             <v-col cols="12" md="8">
-                    <v-switch v-model="informNewPenalty" class="ma-2" label="Информировать о новых штрафах ГИБДД"></v-switch>
+                    <v-switch v-model="editedItem.informNewPenalty" class="ma-2" label="Информировать о новых штрафах ГИБДД"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="templeteSMSThree"
+                v-model="editedItem.templeteSMSThree"
                 :counter="300"
                 label="Шаблон SMS"
                 required
             ></v-text-field>
             </v-col>
             <v-col cols="12" md="8">
-                    <v-switch v-model="informNeedChangeOli" class="ma-2" label="Информировать о необходимости замены масла"></v-switch>
+                    <v-switch v-model="editedItem.informNeedChangeOli" class="ma-2" label="Информировать о необходимости замены масла"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="templeteSMSFoo"
+                v-model="editedItem.templeteSMSFoo"
                 :counter="300"
                 label="Шаблон SMS"
                 required
@@ -149,7 +149,7 @@
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="templeteSMSFive"
+                v-model="editedItem.templeteSMSFive"
                 :counter="300"
                 label="Шаблон восстановления пароля"
                 required
@@ -163,7 +163,7 @@
           <v-card-text>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="APIYandexKey"
+            v-model="editedItem.APIYandexKey"
             :counter="50"
             label="API ключ Яндекс Такси"
             required
@@ -171,7 +171,7 @@
         </v-col>
          <v-col cols="12" md="8">
           <v-text-field
-            v-model="idPark"
+            v-model="editedItem.idPark"
             :counter="16"
             label="ID парка"
             required
@@ -179,14 +179,14 @@
         </v-col>
          <v-col cols="12" md="8">
           <v-text-field
-            v-model="idClient"
+            v-model="editedItem.idClient"
             :counter="16"
             label="ID клиента"
             required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
-             <v-select :items="status" v-model="scoreYandexAPI" label="Счет для Яндекс API"></v-select>
+             <v-select :items="status" v-model="editedItem.scoreYandexAPI" label="Счет для Яндекс API"></v-select>
         </v-col>
           </v-card-text>
         </v-card>
@@ -194,21 +194,21 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-             <vue-editor :editorToolbar="customToolbar" v-model="contractTrack"></vue-editor>
+             <vue-editor :editorToolbar="customToolbar" v-model="editedItem.contractTrack"></vue-editor>
           </v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-               <vue-editor v-model="autoReturn"></vue-editor>
+               <vue-editor v-model="editedItem.autoReturn"></vue-editor>
           </v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-               <vue-editor v-model="congratulations"></vue-editor>
+               <vue-editor v-model="editedItem.congratulations"></vue-editor>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -216,11 +216,11 @@
         <v-card flat>
           <v-card-text>
               <v-col cols="12" md="8">
-                    <v-switch v-model="globAllowedBlockAuto" class="ma-2" label="Глобальное разрешение блокировки автомобилей"></v-switch>
+                    <v-switch v-model="editedItem.globAllowedBlockAuto" class="ma-2" label="Глобальное разрешение блокировки автомобилей"></v-switch>
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="smsDriverBlock"
+                v-model="editedItem.smsDriverBlock"
                 :counter="16"
                 label="Текст sms уведомления водителя о блокировке"
                 required
@@ -228,7 +228,7 @@
             </v-col>
             <v-col cols="12" md="8">
             <v-text-field
-                v-model="smsDriverUnblock"
+                v-model="editedItem.smsDriverUnblock"
                 :counter="16"
                 label="Текст sms уведомления водителя о разблокировке"
                 required
@@ -245,6 +245,7 @@
 
 <script>
 import { VueEditor }  from "vue2-editor";
+import axios from "axios";
   export default {
     components: {
         VueEditor
@@ -252,52 +253,69 @@ import { VueEditor }  from "vue2-editor";
     name: 'AppUserCompany',
     data () {
       return {
-        tabs: null,
+      dialog: false,
+      tabs: null,
+      status: ["Foo", "Bar", "Fizz", "Buzz"],
+      customToolbar: [["bold", "italic", "underline"], [{ list: "ordered" }, { list: "bullet" }], ["image", "code-block"]],
+      editedIndex: -1,
+      picker: new Date().toISOString().substr(0, 10),
+      editedItem: {
         contractTrack: '',
         autoReturn: '',
-        customToolbar: [["bold", "italic", "underline"], [{ list: "ordered" }, { list: "bullet" }], ["image", "code-block"]],
+        customToolbar: '',
         congratulations: '',
         APIYandexKey: '',
-        globAllowedBlockAuto: '',
+        globAllowedBlockAuto: false,
         smsDriverBlock: '',
         smsDriverUnblock: '',
         idPark: '',
-        status: ["Foo", "Bar", "Fizz", "Buzz"],
         idClient: '',
         scoreYandexAPI: '',
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         name: '',
         city: '',
         address: '',
         email: '',
         phone: '',
         phoneSTO: '',
-        onTurnSMS: '',
-        sendHello: '',
+        onTurnSMS: false,
+        sendHello: false,
         templeteSMSOne: '',
-        informAboutAddScore: '',
+        informAboutAddScore: false,
         templeteSMSTwo: '',
-        informNewPenalty: '',
+        informNewPenalty: false,
         templeteSMSThree: '',
-        informNeedChangeOli: '',
+        informNeedChangeOli: false,
         templeteSMSFoo: '',
         templeteSMSFive: '',
-        dialog: false,
-      editedIndex: -1,
-      picker: new Date().toISOString().substr(0, 10),
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
       },
       defaultItem: {
+        contractTrack: '',
+        autoReturn: '',
+        customToolbar: '',
+        congratulations: '',
+        APIYandexKey: '',
+        globAllowedBlockAuto: false,
+        smsDriverBlock: '',
+        smsDriverUnblock: '',
+        idPark: '',
+        idClient: '',
+        scoreYandexAPI: '',
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        city: '',
+        address: '',
+        email: '',
+        phone: '',
+        phoneSTO: '',
+        onTurnSMS: false,
+        sendHello: false,
+        templeteSMSOne: '',
+        informAboutAddScore: false,
+        templeteSMSTwo: '',
+        informNewPenalty: false,
+        templeteSMSThree: '',
+        informNeedChangeOli: false,
+        templeteSMSFoo: '',
+        templeteSMSFive: '',
       },
       }
     },
@@ -319,39 +337,89 @@ import { VueEditor }  from "vue2-editor";
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-        ]
-      },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
+         axios({
+            method: "get",
+            url:"http://localhost:8081/selectUserCompanyData"
+          })
+          .then(response => {
+            this.editedItem = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          axios({
+            method: "post",
+            url:"http://localhost:8081/insertUserCompanyData",
+            data: {
+                name: this.editedItem.name,
+                contractTrack: this.editedItem.contractTrack,
+                autoReturn: this.editedItem.autoReturn,
+                customToolbar: this.editedItem.customToolbar,
+                congratulations: this.editedItem.congratulations,
+                APIYandexKey: this.editedItem.APIYandexKey,
+                globAllowedBlockAuto: this.editedItem.globAllowedBlockAuto,
+                smsDriverBlock: this.editedItem.smsDriverBlock,
+                smsDriverUnblock: this.editedItem.smsDriverUnblock,
+                idPark: this.editedItem.idPark,
+                idClient: this.editedItem.idClient,
+                scoreYandexAPI: this.editedItem.scoreYandexAPI,
+                city: this.editedItem.city,
+                address: this.editedItem.address,
+                email: this.editedItem.email,
+                phone: this.editedItem.phone,
+                phoneSTO: this.editedItem.phoneSTO,
+                onTurnSMS: this.editedItem.onTurnSMS,
+                sendHello: this.editedItem.sendHello,
+                templeteSMSOne: this.editedItem.templeteSMSOne,
+                informAboutAddScore: this.editedItem.informAboutAddScore,
+                templeteSMSTwo: this.editedItem.templeteSMSTwo,
+                informNewPenalty: this.editedItem.informNewPenalty,
+                templeteSMSThree: this.editedItem.templeteSMSThree,
+                informNeedChangeOli: this.editedItem.informNeedChangeOli,
+                templeteSMSFoo: this.editedItem.templeteSMSFoo,
+                templeteSMSFive: this.editedItem.templeteSMSFive,
+                _id: this.editedItem._id
+            }
+          })
         } else {
-          this.desserts.push(this.editedItem)
+          axios({
+            method: "post",
+            url:"http://localhost:8081/saveUserCompanyData",
+            data: {
+                name: this.editedItem.name,
+                contractTrack: this.editedItem.contractTrack,
+                autoReturn: this.editedItem.autoReturn,
+                customToolbar: this.editedItem.customToolbar,
+                congratulations: this.editedItem.congratulations,
+                APIYandexKey: this.editedItem.APIYandexKey,
+                globAllowedBlockAuto: this.editedItem.globAllowedBlockAuto,
+                smsDriverBlock: this.editedItem.smsDriverBlock,
+                smsDriverUnblock: this.editedItem.smsDriverUnblock,
+                idPark: this.editedItem.idPark,
+                idClient: this.editedItem.idClient,
+                scoreYandexAPI: this.editedItem.scoreYandexAPI,
+                city: this.editedItem.city,
+                address: this.editedItem.address,
+                email: this.editedItem.email,
+                phone: this.editedItem.phone,
+                phoneSTO: this.editedItem.phoneSTO,
+                onTurnSMS: this.editedItem.onTurnSMS,
+                sendHello: this.editedItem.sendHello,
+                templeteSMSOne: this.editedItem.templeteSMSOne,
+                informAboutAddScore: this.editedItem.informAboutAddScore,
+                templeteSMSTwo: this.editedItem.templeteSMSTwo,
+                informNewPenalty: this.editedItem.informNewPenalty,
+                templeteSMSThree: this.editedItem.templeteSMSThree,
+                informNeedChangeOli: this.editedItem.informNeedChangeOli,
+                templeteSMSFoo: this.editedItem.templeteSMSFoo,
+                templeteSMSFive: this.editedItem.templeteSMSFive,
+                _id: this.editedItem._id
+            }
+          })
         }
-        this.close()
       },
     },
   }
