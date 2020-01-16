@@ -36,6 +36,9 @@ import AppVehicleСreate from '../views/item/AppVehicleСreate.vue'
 import AppVehicleMaintenanceCreate from '../views/item/AppVehicleMaintenanceCreate.vue'
 import AppVehicleOwnerCreate from '../views/item/AppVehicleOwnerCreate.vue'
 import AppBillItemRentBillItemFormCreate from '../views/item/AppBillItemRentBillItemFormCreate.vue'
+import AppVehicleOwnerId from '../views/item/AppVehicleOwnerId.vue'
+import AppUserDriverProfileId from '../views/item/AppUserDriverProfileId.vue'
+import AppVehicleMaintenanceId from '../views/item/AppVehicleMaintenanceId.vue'
 
 Vue.use(VueRouter)
 export default new VueRouter({
@@ -213,9 +216,24 @@ export default new VueRouter({
       component: AppVehicleMaintenanceCreate
     },
     {
+      path: '/admin/VehicleMaintenance/:id',
+      name: 'Редактирование записи т.о.',
+      component: AppVehicleMaintenanceId
+    },
+    {
       path: '/admin/VehicleOwner/create',
       name: 'Добавление владельца',
       component: AppVehicleOwnerCreate
+    },
+    {
+      path: '/admin/VehicleOwner/:id',
+      name: 'Конкретный владелец',
+      component: AppVehicleOwnerId
+    },
+    {
+      path: '/admin/UserDriverProfile/:id',
+      name: 'Клиент (водитель конкрктный)',
+      component: AppUserDriverProfileId
     },
     {
       path: '/admin/BillItem/RentBillItemForm/create',

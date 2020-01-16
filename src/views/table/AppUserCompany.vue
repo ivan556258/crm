@@ -4,13 +4,10 @@
         <v-toolbar-title>Панель управления</v-toolbar-title>
         
         <v-spacer></v-spacer>
-        
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-          </template>
-        </v-dialog>    
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          </template> 
     </v-toolbar>
 
 <template>

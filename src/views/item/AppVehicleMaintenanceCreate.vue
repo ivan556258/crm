@@ -4,15 +4,10 @@
         <v-toolbar-title> Добавление записи т.о.</v-toolbar-title>
         
         <v-spacer></v-spacer>
-        
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-          </template>
-          
-
-        </v-dialog>    
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          </template>  
     </v-toolbar>
 
 <template>
@@ -46,7 +41,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="dateDate"
+                          v-model="dateData"
                           label="Дата"
                           clearable
                           readonly
@@ -55,7 +50,7 @@
                       </template>
                       <v-date-picker
                         ref="datePicker"
-                        v-model="dateDate"
+                        v-model="dateData"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -239,7 +234,7 @@ import axios from "axios"
         stateTyre: null,
         foreginLicenceRegistration: false,
         dateMenu: null,
-        dateDate: null,
+        dateData: null,
         datePicker: new Date().toISOString(),
         dialog: false,
         editedIndex: -1,
@@ -263,15 +258,6 @@ import axios from "axios"
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-        ]
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -295,7 +281,7 @@ import axios from "axios"
         } else {
         axios({
           method: 'post',
-          url: 'http://localhost:8081/insertOwnerData',
+          url: 'http://localhost:8081/insertTechnicalServiceData',
           data: {
               auto: this.auto,
               typeJob: this.typeJob,
@@ -322,8 +308,8 @@ import axios from "axios"
               stateLeftwindscreen: this.stateLeftwindscreen,
               trunkCondition: this.trunkCondition,
               stateTyre: this.stateTyre,
-              foreginLicenceRegistration: false,
-              datePicker: this.datePicker,
+              foreginLicenceRegistration: this.foreginLicenceRegistration,
+              dateData: this.dateData,
           }
         })
         }

@@ -2,15 +2,9 @@
  <div>
       <v-toolbar flat>
         <v-toolbar-title>Добавление статьи</v-toolbar-title>
-        
         <v-spacer></v-spacer>
-        
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>
-            <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn>
-          </template>
-        </v-dialog>    
+            <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn> 
+            <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>  
     </v-toolbar>
 
 <template>
@@ -159,15 +153,6 @@
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-        ]
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)

@@ -48,48 +48,10 @@
   
       <v-toolbar flat color="white">
         <v-toolbar-title>Техобслуживание</v-toolbar-title>
-        
         <v-spacer></v-spacer>
-        
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
+          <template>
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/VehicleMaintenance/create">{{formDriveTitle}}</v-btn>
           </template>
-          
-          <v-card>
-            <v-card-title>
-              <span class="headline">Техобслуживание</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="4Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-toolbar>
     </template>
 
@@ -117,6 +79,7 @@
 </template>
 
 <script>
+import axios from "axios";
   export default {
     name: 'AppVehicleMaintenanceAll',
     data: () => ({
@@ -126,34 +89,32 @@
           text: 'Дата',
           align: 'left',
           sortable: false,
-          value: 'name',
+          value: 'dateData',
         },
-        { text: 'Автомобиль', value: 'fat' },
-        { text: 'Водитель', value: 'carbs' },
-        { text: 'КМ', value: 'protein' },
-        { text: 'З/М', value: 'action', sortable: false },
-        { text: 'Работы', value: 'action', sortable: false },
-        { text: 'Диагностика', value: 'action', sortable: false },
-        { text: 'Сумма', value: 'action', sortable: false },
-        { text: 'ОЦ', value: 'action', sortable: false },
-        { text: 'Статус', value: 'action', sortable: false },
+        { text: 'Автомобиль', value: 'auto', sortable: false },
+        { text: 'Водитель', value: 'driver', sortable: false },
+        { text: 'КМ', value: 'autoRun' },
+        { text: 'З/М', value: 'changeOil', sortable: false },
+        { text: 'Работы', value: 'listJobs', sortable: false },
+        { text: 'Диагностика', value: 'resultDyagnostic', sortable: false },
+        { text: 'Сумма', value: 'summ', sortable: false },
+        { text: 'ОЦ', value: 'rating', sortable: false },
+        { text: 'Статус', value: 'statusRes', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        date: '',
+        auto: '',
+        driver: '',
+        autoRun: '',
+        changeOil: '',
+        listJobs: '',
+        resultDyagnostic: '',
+        summ: '',
+        rating: '',
+        statusRes: '',
       },
     }),
     computed: {
@@ -171,87 +132,31 @@
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectTechnicalServiceData"
+          })
+          .then(response => {
+            this.desserts = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        this.$router.push({ path: `/admin/VehicleMaintenance/${item._id}` })
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        axios({
+            method: "post",
+            url:"http://localhost:8081/deleteTechnicalServiceData",
+            data: {
+                 _id: item._id,
+                 
+            }
+        })
       },
       close () {
         this.dialog = false

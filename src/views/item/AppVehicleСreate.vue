@@ -4,22 +4,10 @@
         <v-toolbar-title>Добавление автомобиля</v-toolbar-title>
         
         <v-spacer></v-spacer>
-        
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-          </template>
-          
-          <v-card>
-            <v-card-title>
-              <span class="headline">Добавление водителя</span>
-            </v-card-title>
-
-
-
-          </v-card>
-        </v-dialog>    
+            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+          </template>   
     </v-toolbar>
 
 <template>
@@ -470,7 +458,7 @@
 <script>
 import axios from "axios"
   export default {
-    name: 'AppVehicleId',
+    name: 'AppVehicleCreate',
     data () {
       return {
             tabs: null,
@@ -576,6 +564,8 @@ import axios from "axios"
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          console.log(this.termValidityTODate);
+          
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertAutomobileData',
@@ -614,15 +604,10 @@ import axios from "axios"
             whoIssuedPTS: this.whoIssuedPTS,
             seriaAndNumberSTS: this.seriaAndNumberSTS,
             startOperationDate: this.startOperationDate,
-            startOperationPicker: this.startOperationPicker,
             finishOperationDate: this.finishOperationDate,
-            finishOperationPicker: this.finishOperationPicker,
             periodInsurancePolicyValidityDate: this.periodInsurancePolicyValidityDate,
-            periodInsurancePolicyValidityPicker: this.periodInsurancePolicyValidityPicker,
             termValidityTODate: this.termValidityTODate,
-            termValidityTOPicker: this.termValidityTOPicker,
-            dateIssuedSTSDate: this.dateIssuedSTSDate,
-            dateIssuedSTSPicker: this.dateIssuedSTSPicker
+            dateIssuedSTDate: this.dateIssuedSTSDate,
           }
         })
         }

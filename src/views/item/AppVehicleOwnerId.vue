@@ -4,10 +4,14 @@
         <v-toolbar-title> Добавление владельца</v-toolbar-title>
         
         <v-spacer></v-spacer>
+        
+       
           <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
             <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
-          </template> 
+       </template>
+          
+ 
     </v-toolbar>
 
 <template>
@@ -142,6 +146,7 @@ import axios from "axios";
         status: ["Foo", "Bar", "Fizz", "Buzz"],
         dialog: false,
         editedItem: {
+          _id: null,
           name: null,
           phone: null,
           contactPerson: null,
@@ -169,12 +174,28 @@ import axios from "axios";
         val || this.close()
       },
     },
+    created () {
+      this.initialize()
+    },
     methods: {
+      initialize () {
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectAccountDataId?id="+this.$route.params.id
+          })
+          .then(response => {
+            this.editedItem = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       save () {
          axios({
           method: 'post',
-          url: 'http://localhost:8081/insertOwnerData',
+          url: 'http://localhost:8081/updateOwnerData',
           data: {
+              _id: this.$route.params.id,
               name: this.editedItem.name,
               phone: this.editedItem.phone,
               contactPerson: this.editedItem.contactPerson,
@@ -188,6 +209,7 @@ import axios from "axios";
               conditionJobs: this.editedItem.conditionJobs,
           }
          })
+        
       },
     },
   }
