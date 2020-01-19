@@ -11,7 +11,7 @@
         
         <v-spacer></v-spacer>
         
-        <v-dialog v-model="dialogPlus" max-width="100%">
+        <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
             <v-btn color="success" class="my-2 ml-1" v-on="on">Пополнить</v-btn>
           </template>
@@ -51,7 +51,7 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="dialogMinus" max-width="100%">
+        <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
             <v-btn color="error" class="my-2 ml-1" v-on="on">Списать</v-btn>
           </template>
@@ -115,40 +115,33 @@ import axios from "axios";
   export default {
     name: 'AppAccountBillAll',
     data: () => ({
-      dialogPlus: false,
-      dialogMinus: false,
+      dialog: false,
       status: ["Foo", "Bar", "Fizz", "Buzz"],
       headers: [
         {
           text: 'Счет',
           align: 'left',
           sortable: false,
-          value: 'name',
+          value: 'cash',
         },
-        { text: 'Договор', value: 'fat' },
+        { text: 'Договор', value: 'contract' },
         { text: 'Создал', value: 'carbs' },
-        { text: 'Статья', value: 'protein' },
-        { text: 'Сумма', value: 'action', sortable: false },
-        { text: 'Описание', value: 'action', sortable: false },
-        { text: 'Время создания', value: 'action', sortable: false },
+        { text: 'Статья', value: 'item' },
+        { text: 'Сумма', value: 'summ', sortable: false },
+        { text: 'Описание', value: 'description', sortable: false },
+        { text: 'Время создания', value: 'carbs', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
+        _id: '',
         cash: '',
         item: '',
         summ: '',
         description: '',
-        protein: '',
         addTransaction: '',
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        statusCash: null,
       },
     }),
     computed: {
@@ -166,78 +159,16 @@ import axios from "axios";
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectAccountBillData"
+          })
+          .then(response => {
+            this.desserts = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -246,45 +177,47 @@ import axios from "axios";
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        axios({
+            method: "post",
+            url:"http://localhost:8081/deleteAccountBillData",
+            data: {
+                 _id: item._id,
+                 
+            }
+        })
       },
-      closePlus () {
+      close () {
         this.dialogPlus = false
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
       },
-      closeMinus () {
-        this.dialogMinus = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
       savePlus () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          axios({
-            method: "post",
-            url: "http://localhost:8081/insertAccountBillData",
-            data:{
-                cash: this.editedItem.cash,
-                item: this.editedItem.item,
-                summ: this.editedItem.summ,
-                description: this.editedItem.description,
-                protein: this.editedItem.protein,
-                addTransaction: this.editedItem.addTransaction,
-                statusCash: 1
-            }
-          })
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
+        this.editedItem.statusCash = 1
+        this.save()
       },
       saveMinus () {
+        this.editedItem.statusCash = 0
+        this.save()
+      },
+      save () {
         if (this.editedIndex > -1) {
+          axios({
+            method: 'post',
+            url: 'http://localhost:8081/updateAccountBillData',
+            data: {
+                  cash: this.editedItem.cash,
+                  item: this.editedItem.item,
+                  summ: this.editedItem.summ,
+                  description: this.editedItem.description,
+                  protein: this.editedItem.protein,
+                  addTransaction: this.editedItem.addTransaction,
+                  statusCash: this.editedItem.statusCash, // если списываем
+                  _id: this.editedItem._id,
+            }
+          })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
           axios({
@@ -297,7 +230,7 @@ import axios from "axios";
                 description: this.editedItem.description,
                 protein: this.editedItem.protein,
                 addTransaction: this.editedItem.addTransaction,
-                statusCash: 0 // если списываем
+                statusCash: this.editedItem.statusCash, // если списываем
             }
           })
           this.desserts.push(this.editedItem)

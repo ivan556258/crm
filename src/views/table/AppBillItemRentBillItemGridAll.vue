@@ -12,11 +12,9 @@
       <v-toolbar flat color="white">
         <v-toolbar-title>Статьи</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
+          <template>
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/BillItem/RentBillItemForm/create">Добавить тариф</v-btn>
           </template>
-        </v-dialog>
       </v-toolbar>
     </template> 
     <template v-slot:item.action="{ item }">
@@ -38,6 +36,7 @@
 </template>
 
 <script>
+import axios from "axios";
   export default {
     name: 'AppBillItemRentBillItemGridAll',
     data: () => ({
@@ -49,25 +48,16 @@
           sortable: false,
           value: 'name',
         },
-        { text: 'Категория', value: 'fat' },
-        { text: 'Описание', value: 'carbs' },
+        { text: 'Категория', value: 'categoryAuto' },
+        { text: 'Описание', value: 'description' },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        categoryAuto: '',
+        description: '',
       },
     }),
     computed: {
@@ -85,102 +75,30 @@
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectTariffData"
+          })
+          .then(response => {
+            this.desserts = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        this.$router.push({ path: `/admin/BillItem/RentBillItemForm/${item._id}` })
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
+        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        axios({
+            method: "post",
+            url:"http://localhost:8081/deleteTariffData",
+            data: {
+                 _id: item._id, 
+            }
+        })
       },
     },
   }

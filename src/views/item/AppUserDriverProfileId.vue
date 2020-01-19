@@ -431,7 +431,7 @@
             url:"http://localhost:8081/selectDriverDataOne?id="+this.$route.params.id
           })
           .then(response => {
-            this.ha = response.data
+            this.editedItem = response.data
           })
           .catch(error => {
             console.log(error)

@@ -32,7 +32,7 @@
                   </v-col>
                   <v-col cols="12" md="6">
                   <v-menu
-                      ref="dateMenu"
+                      ref="editedItem.dateMenu"
                       v-model="dateMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
@@ -41,7 +41,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="dateDate"
+                          v-model="editedItem.dateDate"
                           label="Уведомить"
                           clearable
                           readonly
@@ -49,8 +49,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="datePicker"
-                        v-model="dateDate"
+                        ref="editedItem.datePicker"
+                        v-model="editedItem.dateDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -107,23 +107,19 @@
           text: 'Время создания',
           align: 'left',
           sortable: false,
-          value: 'name',
+          value: 'notify',
         },
-        { text: 'Клиент', value: 'fat' },
+        { text: 'Клиент', value: 'driver"' },
         { text: 'Менеджер', value: 'carbs' },
-        { text: 'Комментарий', value: 'protein' },
-        { text: 'Уведомить', value: 'action', sortable: false },
-        { text: 'Статус', value: 'action', sortable: false },
+        { text: 'Комментарий', value: 'comment' },
+        { text: 'Уведомить', value: 'notify', sortable: false },
+        { text: 'Статус', value: 'actionx', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
         driver: '',
-        comment: '',
-      },
-      defaultItem: {
-         driver: '',
         comment: '',
       },
     }),
@@ -142,78 +138,16 @@
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectUserCommentData"
+          })
+          .then(response => {
+            this.desserts = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -222,7 +156,15 @@
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        axios({
+            method: "post",
+            url:"http://localhost:8081/deleteUserCommentData",
+            data: {
+                 _id: item._id,
+                 
+            }
+        })
       },
       close () {
         this.dialog = false
@@ -233,13 +175,26 @@
       },
       save () {
         if (this.editedIndex > -1) {
+         axios({
+            method: "post",
+            url:"http://localhost:8081/updateUserCommentData",
+            data: {
+                  notify: this.editedItem.dateDate,
+                  driver: this.editedItem.driver,
+                  comment: this.editedItem.comment,
+                  _id: this.editedItem._id,
+                 
+            }
+        })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          console.log(this.editedItem.dateDate);
+          
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertUserCommentData',
           data: {
-            datePicker: this.datePicker,
+            notify: this.editedItem.dateDate,
             driver: this.editedItem.driver,
             comment: this.editedItem.comment,
           }

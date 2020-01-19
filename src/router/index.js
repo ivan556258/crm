@@ -36,6 +36,7 @@ import AppVehicleСreate from '../views/item/AppVehicleСreate.vue'
 import AppVehicleMaintenanceCreate from '../views/item/AppVehicleMaintenanceCreate.vue'
 import AppVehicleOwnerCreate from '../views/item/AppVehicleOwnerCreate.vue'
 import AppBillItemRentBillItemFormCreate from '../views/item/AppBillItemRentBillItemFormCreate.vue'
+import AppBillItemRentBillItemFormId from '../views/item/AppBillItemRentBillItemFormId.vue'
 import AppVehicleOwnerId from '../views/item/AppVehicleOwnerId.vue'
 import AppUserDriverProfileId from '../views/item/AppUserDriverProfileId.vue'
 import AppVehicleMaintenanceId from '../views/item/AppVehicleMaintenanceId.vue'
@@ -239,6 +240,11 @@ export default new VueRouter({
       path: '/admin/BillItem/RentBillItemForm/create',
       name: 'Добавление статьи',
       component: AppBillItemRentBillItemFormCreate
+    },
+    {
+      path: '/admin/BillItem/RentBillItemForm/:id',
+      name: 'редактирование статьи',
+      component: AppBillItemRentBillItemFormId
     },
   ]
 })

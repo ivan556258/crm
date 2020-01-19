@@ -12,14 +12,14 @@
     <v-toolbar>
       <v-tabs
         slot="extension"
-        v-model="tabs"
+        v-model="editedItem.tabs"
         background-color="transparent"
       >
         <v-tab> Информация </v-tab>
       </v-tabs>
     </v-toolbar>
 
-    <v-tabs-items v-model="tabs">
+    <v-tabs-items v-model="editedItem.tabs">
       <v-tab-item>
         <v-card flat>
           <v-card-text>
@@ -31,7 +31,7 @@
           md="8"
         >
           <v-text-field
-            v-model="name"
+            v-model="editedItem.name"
             :counter="150"
             label="Название"
             required
@@ -40,36 +40,36 @@
 
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="description"
+            v-model="editedItem.description"
             :counter="150"
             label="Описание"
             required
           ></v-text-field>
         </v-col>
           <v-col cols="12" md="8">
-           <v-select :items="status" v-model="categoryAuto" label="Категория автомобилей"></v-select>
+           <v-select :items="status" v-model="editedItem.categoryAuto" label="Категория автомобилей"></v-select>
           </v-col>
           <v-col cols="12" md="8">
-           <v-select :items="status" v-model="tariff" label="Тарифный план"></v-select>
+           <v-select :items="status" v-model="editedItem.tariff" label="Тарифный план"></v-select>
           </v-col>
           <v-col cols="12" md="8">
-           <v-select :items="status" v-model="network" label="Размер сетки"></v-select>
+           <v-select :items="status" v-model="editedItem.network" label="Размер сетки"></v-select>
           </v-col> 
           <v-col cols="12" md="8">
           <v-text-field
-            v-model="coastPerDay"
+            v-model="editedItem.coastPerDay"
             :counter="6"
             label="Стоимость за сутки"
             required
           ></v-text-field>
         </v-col> 
         <v-col cols="12" md="8">
-           <v-select :items="status" v-model="contractContinue" label="При продлении договора"></v-select>
+           <v-select :items="status" v-model="editedItem.contractContinue" label="При продлении договора"></v-select>
         </v-col> 
 
          <v-col cols="12" md="8">
           <v-text-field
-            v-model="startPayment"
+            v-model="editedItem.startPayment"
             :counter="10"
             label="Стартовый платёж"
             required
@@ -78,17 +78,15 @@
       
          <v-col cols="12" md="8">
           <v-text-field
-            v-model="summAmount"
+            v-model="editedItem.summAmount"
             :counter="12"
             label="Сумма залога"
             required
           ></v-text-field> 
          </v-col>
-
          <v-col cols="12" md="8">
-           <v-select :items="status" v-model="statusRes" label="Статус"></v-select>
+           <v-select :items="status" v-model="editedItem.statusRes" label="Статус"></v-select>
          </v-col> 
-
       </v-row>
     </v-container>
 </template>
@@ -108,32 +106,34 @@
     data () {
       return {
         tabs: null,
-        name: '',
-        description: '',
-        categoryAuto: '',
-        tariff: '',
-        network: '',
-        coastPerDay: '',
-        contractContinue: '',
-        startPayment: '',
-        summAmount: '',
-        statusRes: '',
-        status: [
-          "активный", 
-          "заблокированный", 
-          "проверенный", 
-          "удалённый", 
-          "неактивный", 
-          "предрегистрация", 
-          "предрегистрация", 
-          "предрегистрация",
-          "непроверенный",
-          "передан на взыскание"
-          ],
         dialog: false,
       editedIndex: -1,
       picker: new Date().toISOString(),
-      }
+      status: [
+                    "активный", 
+                    "заблокированный", 
+                    "проверенный", 
+                    "удалённый", 
+                    "неактивный", 
+                    "предрегистрация", 
+                    "предрегистрация", 
+                    "предрегистрация",
+                    "непроверенный",
+                    "передан на взыскание"
+                ],
+      editedItem:{
+                name: '',
+                description: '',
+                categoryAuto: '',
+                tariff: '',
+                network: '',
+                coastPerDay: '',
+                contractContinue: '',
+                startPayment: '',
+                summAmount: '',
+                statusRes: '',
+            }
+        }
     },
     computed: {
       formDriveTitle () {
@@ -153,38 +153,32 @@
     },
     methods: {
       initialize () {
-      },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectTariffDataOne?id="+this.$route.params.id
+          })
+          .then(response => {
+            this.editedItem = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       save () {
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertTariffData',
           data: {
-                name: this.name,
-                description: this.description,
-                categoryAuto: this.categoryAuto,
-                tariff: this.tariff,
-                network: this.network,
-                coastPerDay: this.coastPerDay,
-                contractContinue: this.contractContinue,
-                startPayment: this.startPayment,
-                summAmount: this.summAmount,
-                statusRes: this.statusRes,
+                name: this.editedItem.name,
+                description: this.editedItem.description,
+                categoryAuto: this.editedItem.categoryAuto,
+                tariff: this.editedItem.tariff,
+                network: this.editedItem.network,
+                coastPerDay: this.editedItem.coastPerDay,
+                contractContinue: this.editedItem.contractContinue,
+                startPayment: this.editedItem.startPayment,
+                summAmount: this.editedItem.summAmount,
+                statusRes: this.editedItem.statusRes,
           }
         })
       .then(function(){

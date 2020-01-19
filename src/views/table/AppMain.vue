@@ -4,11 +4,11 @@
       <v-toolbar-title class="ml-3 mt-2">Панель управления</v-toolbar-title>
       <v-spacer></v-spacer>
       <div class="d-flex">
-        <v-card class="text-right ml-3 mt-2" max-width="314" outlined>
+        <v-card class="text-right ml-3 mt-2 bg-cover bg-in-job-1" max-width="314" outlined>
           <v-list-item three-line>
             <v-list-item-content>
-              <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
-              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+              <v-list-item-title class="headline mb-1 bg-style-job">Машин в работе</v-list-item-title>
+              <v-list-item-subtitle><span class="color-score">35</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -17,25 +17,11 @@
             <v-btn text>Подробнее</v-btn>
           </v-card-actions>
         </v-card>
-        <v-card class="text-right ml-3 mt-2" max-width="314" outlined>
+        <v-card class="text-right ml-3 mt-2 bg-cover bg-in-job-2" max-width="314" outlined>
           <v-list-item three-line>
             <v-list-item-content>
-              <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
-              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text>Подробнее</v-btn>
-          </v-card-actions>
-        </v-card>
-
-        <v-card class="text-right ml-3 mt-2" max-width="314" outlined>
-          <v-list-item three-line>
-            <v-list-item-content>
-              <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
-              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+              <v-list-item-title class="headline mb-1 bg-style-job">Свободно машин</v-list-item-title>
+              <v-list-item-subtitle><span class="color-score">10</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -45,11 +31,25 @@
           </v-card-actions>
         </v-card>
 
-        <v-card class="text-right ml-3 mt-2" max-width="314" outlined>
+        <v-card class="text-right ml-3 mt-2 bg-cover bg-in-job-3" max-width="314" outlined>
           <v-list-item three-line>
             <v-list-item-content>
-              <v-list-item-title class="headline mb-1">Headline 5</v-list-item-title>
-              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+              <v-list-item-title class="headline mb-1 bg-style-job">Машин в обслуживании</v-list-item-title>
+              <v-list-item-subtitle><span class="color-score">0</span></v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text>Подробнее</v-btn>
+          </v-card-actions>
+        </v-card>
+
+        <v-card class="text-right ml-3 mt-2 bg-cover bg-in-job-4" max-width="314" outlined>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="headline mb-1 bg-style-job">Сумма балансов</v-list-item-title>
+              <v-list-item-subtitle><span class="color-score">18888</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -336,3 +336,28 @@ export default {
   }
 };
 </script>
+<style scoped>
+.bg-cover{
+  background-size: cover
+}
+.bg-in-job-1{
+  background-color: rgb(220, 220, 220)!important;
+  border-color: rgb(220, 220, 220)
+}
+.bg-in-job-2{
+  background-color: rgb(220, 220, 220)!important;
+  border-color: rgb(220, 220, 220)
+}
+.bg-in-job-3{
+  background-color: rgb(220, 220, 220)!important;
+  border-color: rgb(220, 220, 220)
+}
+.bg-in-job-4{
+  background-color: rgb(220, 220, 220)!important;
+  border-color: rgb(38, 198, 218)
+}
+.bg-style-job{
+    color: rgb(123, 109, 109);
+    font-weight: bold!important
+}
+</style>
