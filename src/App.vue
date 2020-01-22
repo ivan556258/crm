@@ -1,168 +1,188 @@
 <template>
-  <v-app id="keep">
-    <v-app-bar app clipped-left color="amber">
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
-      <span class="title ml-3 mr-5">
-        Компания&nbsp;
-        <span class="font-weight-light">"ООО "АВТО ДРАЙВ"</span>
-      </span>
-      <v-text-field solo-inverted flat hide-details label="Поиск по CRM" />
+  <div v-if="auth != 'null'">
+    <v-app id="keep">
+      <v-app-bar app clipped-left color="amber">
+        <v-app-bar-nav-icon @click="drawer = !drawer" />
+        <span class="title ml-3 mr-5">
+          Компания&nbsp;
+          <span class="font-weight-light">"ООО "АВТО ДРАЙВ"</span>
+        </span>
+        <v-text-field solo-inverted flat hide-details label="Поиск по CRM" />
 
-      <v-spacer />
-    </v-app-bar>
-
-
-    <v-navigation-drawer v-model="drawer" app clipped color="grey lighten-4">
-      <v-list dense class="grey lighten-4">
-
-        <template>
-          <v-list-item v-for="item in main" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-
-        <v-list-group prepend-icon="account_circle">
-          
-          <template v-slot:activator>
-            <v-list-item-title>Автомобили</v-list-item-title>
-          </template>
-
-          
-          <template>
-          <v-list-item v-for="item in cars" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>
-
-         <template>
-          <v-list-item v-for="item in conatactAll" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-    
-
-        <v-list-group prepend-icon="account_circle">
-          <template v-slot:activator>
-            <v-list-item-title>Пользователи</v-list-item-title>
-          </template>
-
-        <template>
-          <v-list-item v-for="item in users" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>
-
-        <v-list-group prepend-icon="account_circle">
-          <template v-slot:activator>
-            <v-list-item-title>Касса</v-list-item-title>
-          </template>
-
-          <template>
-          <v-list-item v-for="item in cashbox" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>
-
-        <v-list-group prepend-icon="account_circle">
-          <template v-slot:activator>
-            <v-list-item-title>Билдинг</v-list-item-title>
-          </template>
-
-                    <template>
-          <v-list-item v-for="item in billing" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>   
-
-        <v-list-group prepend-icon="account_circle">
-          <template v-slot:activator>
-            <v-list-item-title>Гараж</v-list-item-title>
-          </template>
-
-          <template>
-          <v-list-item v-for="item in warehouse" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>  
-
-        <v-list-group prepend-icon="account_circle">
-          <template v-slot:activator>
-            <v-list-item-title>Статистика</v-list-item-title>
-          </template>
-
-          <template>
-          <v-list-item v-for="item in charts" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-        </v-list-group>            
-
-        <template>
-          <v-list-item v-for="item in items" :key="item.i" router :to="item.route">
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
+        <v-spacer />
+        <div class="text-center">
+    <v-menu offset-y>
+      <template v-slot:activator="{ on }">
+        <v-btn text icon v-on="on">
+        <v-avatar color="orange" size="45">
+      <span class="white--text">АД</span>
+    </v-avatar>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title>
+                    <v-btn text @click="logout">Выйти</v-btn>
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
-    </v-navigation-drawer>
+    </v-menu>
+  </div>
+        
+      </v-app-bar>
 
-    <v-content>
-      <router-view></router-view>
-    </v-content>
+      <v-navigation-drawer v-model="drawer" app clipped color="grey lighten-4">
+        <v-list dense class="grey lighten-4">
+          <template>
+            <v-list-item v-for="item in main" :key="item.i" router :to="item.route">
+              <v-list-item-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Автомобили</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in cars" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <template>
+            <v-list-item v-for="item in conatactAll" :key="item.i" router :to="item.route">
+              <v-list-item-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Пользователи</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in users" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Касса</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in cashbox" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Билдинг</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in billing" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Гараж</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in warehouse" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <v-list-group prepend-icon="account_circle">
+            <template v-slot:activator>
+              <v-list-item-title>Статистика</v-list-item-title>
+            </template>
+
+            <template>
+              <v-list-item v-for="item in charts" :key="item.i" router :to="item.route">
+                <v-list-item-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title class="grey--text">{{ item.text }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-group>
+
+          <template>
+            <v-list-item v-for="item in items" :key="item.i" router :to="item.route">
+              <v-list-item-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title class="black--text">{{ item.text }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-content>
+        <router-view></router-view>
+      </v-content>
   </v-app>
+  </div>
+  <div v-else>
+    <v-app id="inspire">
+      <v-content>
+         <router-view></router-view>
+      </v-content>
+    </v-app>
+  </div>
 </template>
-
-
-
 <script>
 export default {
   name: "App",
@@ -170,7 +190,15 @@ export default {
     source: String
   },
   data: () => ({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    ip: "",
+    select: null,
+    checkbox: false,
     drawer: null,
+    auth: localStorage.auth,
     cars: [
       {
         route: "/admin/Vehicle/all",
@@ -191,14 +219,14 @@ export default {
         route: "/admin/VehicleOwner/all",
         text: "Владельцы",
         icon: "waves"
-      },
+      }
     ],
     conatactAll: [
-     { 
+      {
         route: "/admin/ContractAll",
         text: "Договоры аренды",
         icon: "waves"
-     },
+      }
     ],
     users: [
       {
@@ -339,8 +367,29 @@ export default {
         icon: "waves"
       }
     ]
-  })
-};
+  }),
+  mounted() {
+    if (localStorage.auth) {
+      this.auth = localStorage.auth
+    }
+  },
+  created() {
+   if(this.auth === null || this.auth == 'null'){
+     this.$router.push({ path: `/admin/auth` })
+   }
+  },
+  watch: {
+    auth(token) {
+      localStorage.auth = token
+    }
+  },
+  methods:{
+    logout(){
+      localStorage.auth = null
+      location.href="/admin/auth"
+    }
+  }
+}
 </script>
 <style scoped>
 #keep .v-navigation-drawer__border {

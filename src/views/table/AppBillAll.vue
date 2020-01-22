@@ -28,7 +28,7 @@
                         <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
                   </v-col>
                   <v-col cols="12" md="8">
-                        <v-select :items="driverName" v-bind:id="editedItem.driverId" v-model="editedItem.score" label="Счёт"></v-select>
+                        <v-select :items="drivers" item-value="_id"  item-text="lastname"  v-model="editedItem.score" label="Счёт"></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="8">
                     <v-text-field v-model="editedItem.summ" label="Cумма"></v-text-field>
@@ -139,19 +139,20 @@ import axios from "axios"
           })
           .then(response => {
             this.drivers = response.data
-            console.log(this.drivers);
+            //console.log(this.drivers);
             for (let index = 0; index < response.data.length; index++) {
-              this.driverName.push(
+              this.driverName.push({title:
                 response.data[index].lastname + ' ' + 
                 response.data[index].firstname + ' ' + 
-                response.data[index].fathername 
-              );
+                response.data[index].fathername ,
+              });
               this.driverId.push(
                  response.data[index]._id
               )
               
-            }
-            console.log(this.driverId);
+            } 
+            //Array.prototype.push.apply(this.desserts, response.data);
+            console.log(this.drivers);
             
             
           })
@@ -186,7 +187,7 @@ import axios from "axios"
       },
       save () {
         if (this.editedIndex > -1) {
-          console.log(this.editedItem.driverId);
+          console.log(this.editedItem.score); // тут айди
           
           axios({
             method: "post",

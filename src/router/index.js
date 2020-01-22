@@ -40,6 +40,10 @@ import AppBillItemRentBillItemFormId from '../views/item/AppBillItemRentBillItem
 import AppVehicleOwnerId from '../views/item/AppVehicleOwnerId.vue'
 import AppUserDriverProfileId from '../views/item/AppUserDriverProfileId.vue'
 import AppVehicleMaintenanceId from '../views/item/AppVehicleMaintenanceId.vue'
+import AppAuth from '../views/AppAuth.vue'
+import AppRegistration from '../views/AppRegistration.vue'
+import AppResetPassword from '../views/AppResetPassword.vue'
+
 
 Vue.use(VueRouter)
 export default new VueRouter({
@@ -245,6 +249,21 @@ export default new VueRouter({
       path: '/admin/BillItem/RentBillItemForm/:id',
       name: 'редактирование статьи',
       component: AppBillItemRentBillItemFormId
+    },
+    {
+      path: '/admin/auth',
+      name: 'авторизация',
+      component: AppAuth
+    },
+    {
+      path: '/admin/registration',
+      name: 'регистрация',
+      component: AppRegistration
+    },
+    {
+      path: '/admin/resetPassword',
+      name: 'востановление пароля',
+      component: AppResetPassword
     },
   ]
 })
