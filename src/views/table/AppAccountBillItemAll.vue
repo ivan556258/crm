@@ -31,7 +31,13 @@
                     <v-text-field v-model="editedItem.description" label="Описание"></v-text-field>
                   </v-col>
                   <v-col cols="12" md="8">
-                    <v-select :items="status" v-model="editedItem.type" label="Тип"></v-select>
+                    <v-select 
+                        :items="status" 
+                        :item-text="item => item.value"  
+                        item-value="key" 
+                        v-model="editedItem.type" 
+                        label="Тип">
+                    </v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -71,7 +77,16 @@ import axios from "axios";
     name: 'AppAccountBillItemAll',
     data: () => ({
       dialog: false,
-      status: ["Foo", "Bar", "Fizz", "Buzz"],
+      status: [
+            {
+              key: "0", 
+              value: "расход",
+            },
+            {
+              key: "1", 
+              value: "приход",
+            }
+        ],
       headers: [
         {
           text: 'Название',
@@ -80,7 +95,7 @@ import axios from "axios";
           value: 'name',
         },
         { text: 'Описание', value: 'description' },
-        { text: 'Тип', value: 'type' },
+        { text: 'Тип', value: 'typeStr' },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
@@ -113,7 +128,7 @@ import axios from "axios";
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectAccountBillItemData"
+            url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data
@@ -160,6 +175,7 @@ import axios from "axios";
           })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          
           axios({
             method: "post",
             url: "http://localhost:8081/insertAccountBillItemData",
@@ -167,6 +183,7 @@ import axios from "axios";
               name: this.editedItem.name,
               description: this.editedItem.description,
               type: this.editedItem.type,
+              token: localStorage.getItem('auth'),
             }
           })
           this.desserts.push(this.editedItem)

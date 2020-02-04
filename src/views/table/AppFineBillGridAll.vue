@@ -39,11 +39,21 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" md="8">
-                        <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
+                 <v-col cols="12" md="8">
+                        <v-select 
+                              :items="tariff" 
+                              :item-text="item => item.name"  
+                              item-value="_id" 
+                              v-model="editedItem.item" label="Статья"></v-select>
                   </v-col>
                   <v-col cols="12" md="8">
-                        <v-select :items="status" v-model="editedItem.score" label="Счёт"></v-select>
+                        <v-select
+                         :items="drivers" 
+                         :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
+                         item-value="_id" 
+                         v-model="editedItem.score"
+                         label="Счёт">
+                        </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="8">
                     <v-text-field v-model="editedItem.summ" label="Cумма"></v-text-field>
@@ -92,7 +102,10 @@ import axios from "axios"
     name: 'AppFineBillGridAll',
     data: () => ({
       dialog: false,
-      status: ["Foo", "Bar", "Fizz", "Buzz"],
+      drivers: [],
+      tariff: "",
+      driverName: [],
+      driverId: [],
       headers: [
         {
           text: 'ФИО',
@@ -102,13 +115,16 @@ import axios from "axios"
         },
         { text: 'Описание', value: 'description' },
         { text: 'Сумма', value: 'summ' },
-        { text: 'Время создания', value: 'protein' },
-        { text: 'Статус', value: 'daction', sortable: false },
+        { text: 'Время создания', value: 'dateInsert' },
+        { text: 'Статус', value: 'addTransaction', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
-       editedItem: {
+      editedItem: {
+        driverId: '',
+        scoreName: '',
+        name: '',
         item: '',
         score: '',
         summ: '',
@@ -130,13 +146,35 @@ import axios from "axios"
       this.initialize()
     },
     methods: {
-      initialize () {
+           initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectPenaltyData"
+            url:"http://localhost:8081/selectPenaltyData?token="+localStorage.getItem('auth')
           })
           .then(response => {
+            console.log(response.data['0']);
             this.desserts = response.data
+            
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.drivers = response.data 
+          })
+          .catch(error => {
+            console.log(error)
+          })
+           axios({
+            method: "get",
+            url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.tariff = response.data
           })
           .catch(error => {
             console.log(error)
@@ -172,12 +210,12 @@ import axios from "axios"
             method: "post",
             url:"http://localhost:8081/updatePenaltyData",
             data: {
-                item: this.editedItem.item,
-                score: this.editedItem.score,
-                summ: this.editedItem.summ,
-                description: this.editedItem.description,
-                addTransaction: this.editedItem.addTransaction,
-                _id: this.editedItem._id,
+                  item: this.editedItem.item,
+                  score: this.editedItem.score,
+                  summ: this.editedItem.summ,
+                  description: this.editedItem.description,
+                  addTransaction: this.editedItem.addTransaction,
+                  _id: this.editedItem._id,
                  
             }
         })
@@ -192,6 +230,7 @@ import axios from "axios"
               summ: this.editedItem.summ,
               description: this.editedItem.description,
               addTransaction: this.editedItem.addTransaction,
+              token: localStorage.getItem('auth'),
           }
           })
           this.desserts.push(this.editedItem)

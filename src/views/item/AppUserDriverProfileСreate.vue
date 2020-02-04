@@ -420,22 +420,6 @@
     methods: {
       initialize () {
       },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
       save () {
           axios({
           method: 'post',
@@ -478,7 +462,8 @@
               brithdaypicker: this.brithdaypicker,
               dateIssuedPicker: this.dateIssuedPicker,
               dateIssuedDriverLicencePicker: this.dateIssuedDriverLicencePicker,
-              status: this.status
+              status: this.status,
+              token: localStorage.getItem('auth')
           }
         })
       .then(function(){

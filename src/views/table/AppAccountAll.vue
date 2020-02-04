@@ -100,7 +100,7 @@ import axios from "axios";
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectAccountData"
+            url:"http://localhost:8081/selectAccountData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data
@@ -150,7 +150,8 @@ import axios from "axios";
             method: "post",
             url:"http://localhost:8081/insertAccountData",
             data: {
-                name: this.editedItem.name
+                name: this.editedItem.name,
+                token: localStorage.getItem('auth')
             }
           })
           this.desserts.push(this.editedItem)

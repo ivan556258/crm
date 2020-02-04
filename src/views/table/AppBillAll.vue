@@ -25,10 +25,20 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" md="8">
-                        <v-select :items="status" v-model="editedItem.item" label="Статья"></v-select>
+                        <v-select 
+                              :items="tariff" 
+                              :item-text="item => item.name"  
+                              item-value="_id" 
+                              v-model="editedItem.item" label="Статья"></v-select>
                   </v-col>
                   <v-col cols="12" md="8">
-                        <v-select :items="drivers" item-value="_id"  item-text="lastname"  v-model="editedItem.score" label="Счёт"></v-select>
+                        <v-select
+                         :items="drivers" 
+                         :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
+                         item-value="_id" 
+                         v-model="editedItem.score"
+                         label="Счёт">
+                        </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="8">
                     <v-text-field v-model="editedItem.summ" label="Cумма"></v-text-field>
@@ -75,8 +85,8 @@ import axios from "axios"
     name: 'AppBillAll',
     data: () => ({
       dialog: false,
-      status: ["Foo", "Bar", "Fizz", "Buzz"],
       drivers: [],
+      tariff: "",
       driverName: [],
       driverId: [],
       headers: [
@@ -84,20 +94,21 @@ import axios from "axios"
           text: 'ФИО',
           align: 'left',
           sortable: false,
-          value: 'score',
+          value: 'name',
         },
-        { text: 'Статья', value: 'item' },
+        { text: 'Статья', value: 'tariff' },
         { text: 'Сумма', value: 'summ' },
         { text: 'Описание', value: 'description' },
-        { text: 'Время создания', value: 'actionx', sortable: false },
-        { text: 'Статус', value: 'actionx', sortable: false },
-        { text: 'Создатель', value: 'actionx', sortable: false },
+        { text: 'Время создания', value: 'dateInsert', sortable: false },
+        { text: 'Статус', value: 'addTransaction', sortable: false },
+        { text: 'Создатель', value: 'autor', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
         driverId: '',
+        scoreName: '',
         name: '',
         item: '',
         score: '',
@@ -123,11 +134,11 @@ import axios from "axios"
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectTransactionData"
+            url:"http://localhost:8081/selectTransactionData?token="+localStorage.getItem('auth')
           })
           .then(response => {
+            console.log(response.data['0']);
             this.desserts = response.data
-            console.log(this.desserts);
             
           })
           .catch(error => {
@@ -135,31 +146,24 @@ import axios from "axios"
           })
           axios({
             method: "get",
-            url:"http://localhost:8081/selectDriverData"
+            url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            this.drivers = response.data
-            //console.log(this.drivers);
-            for (let index = 0; index < response.data.length; index++) {
-              this.driverName.push({title:
-                response.data[index].lastname + ' ' + 
-                response.data[index].firstname + ' ' + 
-                response.data[index].fathername ,
-              });
-              this.driverId.push(
-                 response.data[index]._id
-              )
-              
-            } 
-            //Array.prototype.push.apply(this.desserts, response.data);
-            console.log(this.drivers);
-            
-            
+            this.drivers = response.data 
           })
           .catch(error => {
             console.log(error)
           })
-          
+           axios({
+            method: "get",
+            url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.tariff = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -173,8 +177,7 @@ import axios from "axios"
             method: "post",
             url:"http://localhost:8081/deleteTransactionData",
             data: {
-                 _id: item._id,
-                 
+                 _id: item._id,  
             }
         })
       },
@@ -187,8 +190,6 @@ import axios from "axios"
       },
       save () {
         if (this.editedIndex > -1) {
-          console.log(this.editedItem.score); // тут айди
-          
           axios({
             method: "post",
             url:"http://localhost:8081/updateTransactionData",
@@ -198,8 +199,7 @@ import axios from "axios"
                 summ: this.editedItem.summ,
                 description: this.editedItem.description,
                 addTransaction: this.editedItem.addTransaction,
-                _id: this.editedItem._id,
-                 
+                _id: this.editedItem._id, 
             }
         })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
@@ -213,6 +213,7 @@ import axios from "axios"
               summ: this.editedItem.summ,
               description: this.editedItem.description,
               addTransaction: this.editedItem.addTransaction,
+              token: localStorage.getItem('auth'),
           }
           })
           this.desserts.push(this.editedItem)

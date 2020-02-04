@@ -149,9 +149,12 @@ export default {
                 this.show = false;
             }, 2000);
           }
+          else if(response.data == ""){
+              alert("Не те данные")
+          }
           else{
-            this.auth = response.data['0']._id
-            localStorage.auth = response.data['0']._id
+            this.auth = response.data
+            localStorage.auth = response.data
             location.href="/admin/main"
           }
         })

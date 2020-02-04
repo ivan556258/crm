@@ -608,6 +608,7 @@ import axios from "axios"
             periodInsurancePolicyValidityDate: this.periodInsurancePolicyValidityDate,
             termValidityTODate: this.termValidityTODate,
             dateIssuedSTDate: this.dateIssuedSTSDate,
+            token: localStorage.getItem('auth')
           }
         })
         }

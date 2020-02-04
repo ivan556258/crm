@@ -81,13 +81,30 @@
                     <v-text-field v-model="editedItem.number" label="Номер"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                     <v-select :items="driver" v-model="editedItem.driver" label="Водитель"></v-select>
+                        <v-select 
+                             :items="drivers" 
+                             :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
+                              item-value="_id" 
+                              v-model="editedItem.driver" 
+                              label="Водитель">
+                        </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-select :items="auto" v-model="editedItem.auto" label="Автомобиль"></v-select>
+                    <v-select 
+                        :items="auto" 
+                        :item-text="item => item.model +'  '+ item.numberSymbol + '  ' + item.owner"
+                        item-value="_id" 
+                        v-model="editedItem.auto" 
+                        label="Автомобиль">
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-select :items="tariff" v-model="editedItem.tariff" label="Тариф"></v-select>
+                    <v-select 
+                              :items="tariff" 
+                              :item-text="item => item.name"  
+                              item-value="_id" 
+                              v-model="editedItem.tariff" label="Тариф">
+                  </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                   <v-menu
@@ -178,10 +195,10 @@ export default {
   data: () => ({
     dialog: false,
     picker: new Date().toISOString(),
-    auto: ["Foo", "Bar", "Fizz", "Buzz"],
-    driver: ["Foo", "Bar", "Fizz", "Buzz"],
-    tariff: ["Foo", "Bar", "Fizz", "Buzz"],
-    status: ["Foo", "Bar", "Fizz", "Buzz"],
+    auto: [],
+    drivers: [],
+    tariff: "",
+    status: "",
     continues: false,
     headers: [
       {
@@ -250,11 +267,11 @@ export default {
   created() {
     this.initialize();
   },
-  methods: {
-    initialize() {
-      axios({
+methods: {
+      initialize () {
+        axios({
             method: "get",
-            url:"http://localhost:8081/selectContractData"
+            url:"http://localhost:8081/selectContractData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data
@@ -262,7 +279,43 @@ export default {
           .catch(error => {
             console.log(error)
           })
-    },
+
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.drivers = response.data 
+            
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
+           axios({
+            method: "get",
+            url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.tariff = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selecAutomobileData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.auto = response.data
+            console.log(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
+      },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -320,7 +373,8 @@ export default {
             enddate: this.editedItem.enddate,
             continues: this.editedItem.continues,
             moreInfo: this.editedItem.moreInfo,
-            status: this.editedItem.status
+            status: this.editedItem.status,
+            token: localStorage.getItem('auth')
           }
         })
       .then(function(){
