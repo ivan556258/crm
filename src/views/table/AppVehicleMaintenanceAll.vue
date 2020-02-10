@@ -134,7 +134,7 @@ import axios from "axios";
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectTechnicalServiceData"
+            url:"http://localhost:8081/selectTechnicalServiceData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data

@@ -186,6 +186,7 @@ import axios from "axios";
               perDay: this.editedItem.perDay,
               perMounth: this.editedItem.perMounth,
               conditionJobs: this.editedItem.conditionJobs,
+              token: localStorage.getItem('auth'),
           }
          })
       },

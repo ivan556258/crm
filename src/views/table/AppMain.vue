@@ -205,11 +205,11 @@ export default {
         text: "Автомобиль",
         align: "left",
         sortable: false,
-        value: "auto"
+        value: "autoStr"
       },
-      { text: "Водитель", value: "driver" },
-      { text: "Тариф", value: "tariff" },
-      { text: "Телефон", value: "phone" },
+      { text: "Водитель", value: "driverStr" },
+      { text: "Тариф", value: "tariffStr" },
+      { text: "Телефон", value: "driverPhone" },
       { text: "Баланс", value: "balance", sortable: false },
       { text: "Штрафы", value: "penaltis", sortable: false },
       { text: "Депозит", value: "deposit", sortable: false },
@@ -221,6 +221,7 @@ export default {
     editedItem: {
       _id: null,
       beginmenu: null,
+      driverPhone: null,
       number: null,
       endmenu: null,
       enddate: null,
@@ -229,6 +230,9 @@ export default {
       auto: null,
       driver: null,
       tariff: null,
+      autoStr: null,
+      driverStr: null,
+      tariffStr: null,
       status: null,
       continues: false
     },
@@ -243,6 +247,7 @@ export default {
       auto: null,
       driver: null,
       tariff: null,
+      driverPhone: null,
       status: null,
       continues: false
     }
