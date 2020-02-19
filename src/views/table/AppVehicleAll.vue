@@ -88,7 +88,7 @@ export default {
     initialize() {
       axios({
             method: "get",
-            url:"http://localhost:8081/selecAutomobileData"
+            url:"http://localhost:8081/selecAutomobileData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data

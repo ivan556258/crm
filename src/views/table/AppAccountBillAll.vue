@@ -114,7 +114,7 @@ import axios from "axios";
         item: '',
         summ: '',
         description: '',
-        addTransaction: '',
+        addTransaction: false,
         statusCash: null,
       }
     }),

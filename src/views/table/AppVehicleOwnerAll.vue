@@ -47,7 +47,7 @@ import axios from "axios";
           value: 'name',
         },
         { text: 'Телефон', value: 'phone' },
-        { text: '% выручки', value: 'carbs' },
+        { text: '% выручки', value: 'profitInterest' },
         { text: '% прибыли', value: 'percentageRevenue' },
         { text: 'В день', value: 'perDay' },
         { text: 'В месяц', value: 'perMounth'},
@@ -89,7 +89,7 @@ import axios from "axios";
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectOwnerData"
+            url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data

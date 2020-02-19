@@ -1,15 +1,13 @@
 <template>
  <div>
       <v-toolbar flat>
-        <v-toolbar-title>Добавление автомобиля</v-toolbar-title>
-        
+        <v-toolbar-title>Редактирование автомобиля</v-toolbar-title>
         <v-spacer></v-spacer>
           <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
             <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
           </template>   
     </v-toolbar>
-
 <template>
   <v-card>
     <v-toolbar>
@@ -28,7 +26,6 @@
         <v-card flat>
           <v-card-text>
             <template>
-  <v-form v-model="valid">
     <v-container>
       <v-row>
         <v-col
@@ -36,7 +33,7 @@
           md="8"
         >
           <v-text-field
-            v-model="brand"
+            v-model="editedItem.brand"
             :counter="100"
             label="Марка"
             required
@@ -48,7 +45,7 @@
           md="8"
         >
           <v-text-field
-            v-model="model"
+            v-model="editedItem.model"
             :counter="100"
             label="Модель"
             required
@@ -59,13 +56,13 @@
           cols="12"
           md="8"
         >
-        <v-select :items="status" v-model="owner" label="Владелец"></v-select>
+        <v-select :items="owner" v-model="editedItem.owner" label="Владелец"></v-select>
         </v-col>
          <v-col
           cols="12"
           md="8"
         >
-        <v-select :items="status" v-model="category" label="Категория"></v-select>
+        <v-select :items="category" v-model="editedItem.category" label="Категория"></v-select>
         </v-col>
 
         <v-col
@@ -73,7 +70,7 @@
           md="8"
         >
           <v-text-field
-            v-model="autoRun"
+            v-model="editedItem.autoRun"
             :counter="12"
             label="Пробег"
             required
@@ -82,7 +79,7 @@
         <v-col cols="12" md="8">
           <v-menu
                       ref="startOperationMenu"
-                      v-model="startOperationMenu"
+                      v-model="editedItem.startOperationMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -90,7 +87,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="startOperationDate"
+                          v-model="editedItem.startOperationDate"
                           label="Начало эксплуатации"
                           clearable
                           readonly
@@ -98,8 +95,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="startOperationPicker"
-                        v-model="startOperationDate"
+                        ref="editedItem.startOperationPicker"
+                        v-model="editedItem.startOperationDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -108,8 +105,8 @@
 
         <v-col cols="12" md="8">
           <v-menu
-                      ref="finishOperationMenu"
-                      v-model="finishOperationMenu"
+                      ref="editedItem.finishOperationMenu"
+                      v-model="editedItem.finishOperationMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -117,7 +114,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="finishOperationDate"
+                          v-model="editedItem.finishOperationDate"
                           label="Окончание эксплуатации"
                           clearable
                           readonly
@@ -126,7 +123,7 @@
                       </template>
                       <v-date-picker
                         ref="finishOperationPicker"
-                        v-model="finishOperationDate"
+                        v-model="editedItem.finishOperationDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -134,7 +131,7 @@
          </v-col>
 
         <v-col cols="12" md="8">
-            <v-select :items="status" v-model="statusRes" label="Статус"></v-select>
+            <v-select :items="status" v-model="editedItem.statusRes" label="Статус"></v-select>
         </v-col>
 
          <v-col cols="12" md="12">
@@ -142,7 +139,7 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="nameInsuranceCompany"
+            v-model="editedItem.nameInsuranceCompany"
             :counter="100"
             label="Название страховой компании"
             required
@@ -150,7 +147,7 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="numberInsuranceCompany"
+            v-model="editedItem.numberInsuranceCompany"
             :counter="50"
             label="Номер страхового полиса"
             required
@@ -158,8 +155,8 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="periodInsurancePolicyValidityMenu"
-                      v-model="periodInsurancePolicyValidityMenu"
+                      ref="editedItem.periodInsurancePolicyValidityMenu"
+                      v-model="editedItem.periodInsurancePolicyValidityMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -167,7 +164,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="periodInsurancePolicyValidityDate"
+                          v-model="editedItem.periodInsurancePolicyValidityDate"
                           label="Срок действия страхового полиса"
                           clearable
                           readonly
@@ -175,8 +172,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="periodInsurancePolicyValidityPicker"
-                        v-model="periodInsurancePolicyValidityDate"
+                        ref="editedItem.periodInsurancePolicyValidityPicker"
+                        v-model="editedItem.periodInsurancePolicyValidityDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -184,8 +181,8 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="termValidityTOMenu"
-                      v-model="termValidityTOMenu"
+                      ref="editedItem.termValidityTOMenu"
+                      v-model="editedItem.termValidityTOMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -193,7 +190,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="termValidityTODate"
+                          v-model="editedItem.termValidityTODate"
                           label="Срок окончания действия ТО"
                           clearable
                           readonly
@@ -201,8 +198,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="termValidityTOPicker"
-                        v-model="termValidityTODate"
+                        ref="editedItem.termValidityTOPicker"
+                        v-model="editedItem.termValidityTODate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -210,7 +207,7 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="oilChangeMileageKm"
+            v-model="editedItem.oilChangeMileageKm"
             :counter="12"
             label="Пробег замены масла, км"
             required
@@ -224,11 +221,11 @@
           <v-toolbar-title>Оборудование</v-toolbar-title>
          </v-col>
         <v-col cols="12" md="6">
-            <v-select :items="status" v-model="tyreType" label="Тип шин"></v-select>
+            <v-select :items="tyreType" v-model="editedItem.tyreType" label="Тип шин"></v-select>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="brandTyre"
+            v-model="editedItem.brandTyre"
             :counter="50"
             label="Марка шин"
             required
@@ -236,7 +233,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="beaconNumber"
+            v-model="editedItem.beaconNumber"
             :counter="50"
             label="Номер маяка"
             required
@@ -244,7 +241,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="IMEIbeacon"
+            v-model="editedItem.IMEIbeacon"
             :counter="50"
             label="IMEI маяка"
             required
@@ -252,7 +249,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="additionalEquipment"
+            v-model="editedItem.additionalEquipment"
             :counter="500"
             label="Дополнительное оборудование"
             required
@@ -260,7 +257,6 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-form>
 </template>
           </v-card-text>
         </v-card>
@@ -275,7 +271,7 @@
           </v-col>
           <v-col cols="12" md="6">
           <v-text-field
-            v-model="seriaAndNumberOfPTS"
+            v-model="editedItem.seriaAndNumberOfPTS"
             :counter="50"
             label="Серия и номер ПТС"
             required
@@ -283,7 +279,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="VIN"
+            v-model="editedItem.VIN"
             :counter="50"
             label="VIN"
             required
@@ -291,7 +287,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="nameTypeTS"
+            v-model="editedItem.nameTypeTS"
             :counter="50"
             label="Наименование, тип ТС"
             required
@@ -299,7 +295,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="categoryTS"
+            v-model="editedItem.categoryTS"
             :counter="50"
             label="Категория ТС"
             required
@@ -307,7 +303,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="yearIssued"
+            v-model="editedItem.yearIssued"
             :counter="4"
             label="Год выпуска"
             required
@@ -315,7 +311,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="modelNumberMotor"
+            v-model="editedItem.modelNumberMotor"
             :counter="100"
             label="Модель, номер двигателя"
             required
@@ -323,7 +319,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="chassisFrame"
+            v-model="editedItem.chassisFrame"
             :counter="100"
             label="Шасси (рама)"
             required
@@ -331,7 +327,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="colorCabina"
+            v-model="editedItem.colorCabina"
             :counter="100"
             label="Цвет кузова (кабины, прицепа)"
             required
@@ -339,7 +335,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="enginePower"
+            v-model="editedItem.enginePower"
             :counter="4"
             label="Мощность двигателя, ЛС/КВт"
             required
@@ -347,7 +343,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="engineWorkingVolume"
+            v-model="editedItem.engineWorkingVolume"
             :counter="4"
             label="Рабочий объем двигателя, куб. см"
             required
@@ -355,7 +351,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="motorType"
+            v-model="editedItem.motorType"
             :counter="50"
             label="Тип двигателя"
             required
@@ -363,7 +359,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="ecologyClaas"
+            v-model="editedItem.ecologyClaas"
             :counter="100"
             label="Экологический класс"
             required
@@ -371,7 +367,7 @@
          </v-col>
          <v-col cols="12" md="6">
          <v-text-field
-            v-model="allwedMaxWeight"
+            v-model="editedItem.allwedMaxWeight"
             :counter="6"
             label="Разрешенная максимальная масса, кг"
             required
@@ -379,7 +375,7 @@
         </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="weightWithoutLoads"
+            v-model="editedItem.weightWithoutLoads"
             :counter="6"
             label="Масса без нагрузки, кг"
             required
@@ -387,7 +383,7 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="whoIssuedPTS"
+            v-model="editedItem.whoIssuedPTS"
             :counter="50"
             label="Кем выдан ПТС"
             required
@@ -399,11 +395,11 @@
                 <v-toolbar-title>Свидетельство о регистрации ТС</v-toolbar-title>
           </v-col>
           <v-col cols="12" md="6">
-           <v-switch class="ma-2" v-model="foreginLicenceRegistration" label="Иностранное свидетельство о регистрации"></v-switch>
+           <v-switch class="ma-2" v-model="editedItem.foreginLicenceRegistration" label="Иностранное свидетельство о регистрации"></v-switch>
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="numberSymbol"
+            v-model="editedItem.numberSymbol"
             :counter="10"
             label="Ном. знак"
             required
@@ -411,7 +407,7 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-text-field
-            v-model="seriaAndNumberSTS"
+            v-model="editedItem.seriaAndNumberSTS"
             :counter="25"
             label="Серия и номер СТС"
             required
@@ -419,8 +415,8 @@
          </v-col>
          <v-col cols="12" md="6">
           <v-menu
-                      ref="dateIssuedSTSMenu"
-                      v-model="dateIssuedSTSMenu"
+                      ref="editedItem.dateIssuedSTSMenu"
+                      v-model="editedItem.dateIssuedSTSMenu"
                       :close-on-content-click="false"
                       transition="scale-transition"
                       offset-y
@@ -428,7 +424,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="dateIssuedSTSDate"
+                          v-model="editedItem.dateIssuedSTDate"
                           label="Дата выдачи СТС"
                           clearable
                           readonly
@@ -436,8 +432,8 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        ref="dateIssuedSTSPicker"
-                        v-model="dateIssuedSTSDate"
+                        ref="editedItem.dateIssuedSTSPicker"
+                        v-model="editedItem.dateIssuedSTDate"
                         max="2050-01-01"
                         min="1950-01-01"
                       ></v-date-picker>
@@ -458,62 +454,85 @@
 <script>
 import axios from "axios"
   export default {
-    name: 'AppVehicleCreate',
+    name: 'AppVehicleId',
     data () {
       return {
             tabs: null,
-            status: ["Foo", "Bar", "Fizz", "Buzz"],
-            statusRes: null,
+            status: [
+              "Не выбрана",
+              "Cвободный", 
+              "Удалённый", 
+              "Неактивный", 
+              "Обслуживание",
+              "В аренде"
+              ],
+            tyreType: [
+              "Всесезонная",
+              "Летняя",
+              "Зимняя",
+              ],
+            category: [
+              "Не выбрана",
+              "Эконом",
+              "Комфорт",
+              "Комфорт+",
+              "Бизнес",
+              "VIP",
+              "Минивэн",
+              "Грузоперевозки",
+              "универсал",
+              "Микроавтобус",
+              "Автобус",
+              ],
+            owner: [],
             dialog: false,
             editedIndex: -1,
-            picker: new Date().toISOString(),
-            valid: false,
-            brand: null,
-            model: null,
-            owner: null,
-            category: null,
-            autoRun: null,
-            nameInsuranceCompany: null,
-            numberInsuranceCompany: null,
-            oilChangeMileageKm: null,
-            tyreType: null,
-            brandTyre: null,
-            beaconNumber: null,
-            IMEIbeacon: null,
-            additionalEquipment: null,
-            seriaAndNumberOfPTS: null,
-            VIN: null,
-            nameTypeTS: null,
-            categoryTS: null,
-            chassisFrame: null,
-            modelNumberMotor: null,
-            yearIssued: null,
-            colorCabina: null,
-            enginePower: null,
-            engineWorkingVolume: null,
-            motorType: null,
-            ecologyClaas: null,
-            allwedMaxWeight: null,
-            weightWithoutLoads: null,
-            foreginLicenceRegistration: false,
-            numberSymbol: null,
-            whoIssuedPTS: null,
-            seriaAndNumberSTS: null,
-            startOperationMenu: null,
-            startOperationDate: null,
-            startOperationPicker: new Date().toISOString(),
-            finishOperationMenu: null,
-            finishOperationDate: null,
-            finishOperationPicker: new Date().toISOString(),
-            periodInsurancePolicyValidityMenu: null,
-            periodInsurancePolicyValidityDate: null,
-            periodInsurancePolicyValidityPicker: new Date().toISOString(),
-            termValidityTOMenu: null,
-            termValidityTODate: null,
-            termValidityTOPicker: new Date().toISOString(),
-            dateIssuedSTSMenu: null,
-            dateIssuedSTSDate: null,
-            dateIssuedSTSPicker: new Date().toISOString(),
+            editedItem:{
+                dateIssuedSTSMenu: null,
+                startOperationMenu: null,
+                finishOperationMenu: null,
+                periodInsurancePolicyValidityMenu: null,
+                termValidityTOMenu: null,
+                statusRes: null,
+                brand: null,
+                model: null,
+                owner: null,
+                category: null,
+                autoRun: null,
+                nameInsuranceCompany: null,
+                numberInsuranceCompany: null,
+                oilChangeMileageKm: null,
+                tyreType: null,
+                brandTyre: null,
+                beaconNumber: null,
+                IMEIbeacon: null,
+                additionalEquipment: null,
+                seriaAndNumberOfPTS: null,
+                VIN: null,
+                nameTypeTS: null,
+                categoryTS: null,
+                chassisFrame: null,
+                modelNumberMotor: null,
+                yearIssued: null,
+                colorCabina: null,
+                enginePower: null,
+                engineWorkingVolume: null,
+                motorType: null,
+                ecologyClaas: null,
+                allwedMaxWeight: null,
+                weightWithoutLoads: null,
+                foreginLicenceRegistration: false,
+                numberSymbol: null,
+                whoIssuedPTS: null,
+                seriaAndNumberSTS: null,
+                startOperationDate: null,
+                finishOperationDate: null,
+                periodInsurancePolicyValidityDate: null,
+                termValidityTODate: null,
+                dateIssuedSTDate: null,
+                picker: new Date().toISOString(),
+
+            }
       }
     },
     computed: {
@@ -534,80 +553,73 @@ import axios from "axios"
     },
     methods: {
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-        ]
-      },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
+         axios({
+            method: "get",
+            url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            let element = []
+            for (let index = 0; index < response.data.length; index++) {
+              element = [response.data[index].name];
+            }
+            this.owner = element
+          })
+          .catch(error => {
+            console.log(error)
+          }) 
       },
       save () {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
-          console.log(this.termValidityTODate);
-          
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertAutomobileData',
           data: {
-            statusRes: this.statusRes,
-            picker: this.picker,
-            brand: this.brand,
-            model: this.model,
-            owner: this.owner,
-            category: this.category,
-            autoRun: this.autoRun,
-            nameInsuranceCompany: this.nameInsuranceCompany,
-            numberInsuranceCompany: this.numberInsuranceCompany,
-            oilChangeMileageKm: this.oilChangeMileageKm,
-            tyreType: this.tyreType,
-            brandTyre: this.brandTyre,
-            beaconNumber: this.beaconNumber,
-            IMEIbeacon: this.IMEIbeacon,
-            additionalEquipment: this.additionalEquipment,
-            seriaAndNumberOfPTS: this.seriaAndNumberOfPTS,
-            VIN: this.VIN,
-            nameTypeTS: this.nameTypeTS,
-            categoryTS: this.categoryTS,
-            chassisFrame: this.chassisFrame,
-            modelNumberMotor: this.modelNumberMotor,
-            yearIssued: this.yearIssued,
-            colorCabina: this.colorCabina,
-            enginePower: this.enginePower,
-            engineWorkingVolume: this.engineWorkingVolume,
-            motorType: this.motorType,
-            ecologyClaas: this.ecologyClaas,
-            allwedMaxWeight: this.allwedMaxWeight,
-            weightWithoutLoads: this.weightWithoutLoads,
-            foreginLicenceRegistration: this.foreginLicenceRegistration,
-            numberSymbol: this.numberSymbol,
-            whoIssuedPTS: this.whoIssuedPTS,
-            seriaAndNumberSTS: this.seriaAndNumberSTS,
-            startOperationDate: this.startOperationDate,
-            finishOperationDate: this.finishOperationDate,
-            periodInsurancePolicyValidityDate: this.periodInsurancePolicyValidityDate,
-            termValidityTODate: this.termValidityTODate,
-            dateIssuedSTDate: this.dateIssuedSTSDate,
+            _id: this.$route.params.id,
+            statusRes: this.editedItem.statusRes,
+            picker: this.editedItem.picker,
+            brand: this.editedItem.brand,
+            model: this.editedItem.model,
+            owner: this.editedItem.owner,
+            category: this.editedItem.category,
+            autoRun: this.editedItem.autoRun,
+            nameInsuranceCompany: this.editedItem.nameInsuranceCompany,
+            numberInsuranceCompany: this.editedItem.numberInsuranceCompany,
+            oilChangeMileageKm: this.editedItem.oilChangeMileageKm,
+            tyreType: this.editedItem.tyreType,
+            brandTyre: this.editedItem.brandTyre,
+            beaconNumber: this.editedItem.beaconNumber,
+            IMEIbeacon: this.editedItem.IMEIbeacon,
+            additionalEquipment: this.editedItem.additionalEquipment,
+            seriaAndNumberOfPTS: this.editedItem.seriaAndNumberOfPTS,
+            VIN: this.editedItem.VIN,
+            nameTypeTS: this.editedItem.nameTypeTS,
+            categoryTS: this.editedItem.categoryTS,
+            chassisFrame: this.editedItem.chassisFrame,
+            modelNumberMotor: this.editedItem.modelNumberMotor,
+            yearIssued: this.editedItem.yearIssued,
+            colorCabina: this.editedItem.colorCabina,
+            enginePower: this.editedItem.enginePower,
+            engineWorkingVolume: this.editedItem.engineWorkingVolume,
+            motorType: this.editedItem.motorType,
+            ecologyClaas: this.editedItem.ecologyClaas,
+            allwedMaxWeight: this.editedItem.allwedMaxWeight,
+            weightWithoutLoads: this.editedItem.weightWithoutLoads,
+            foreginLicenceRegistration: this.editedItem.foreginLicenceRegistration,
+            numberSymbol: this.editedItem.numberSymbol,
+            whoIssuedPTS: this.editedItem.whoIssuedPTS,
+            seriaAndNumberSTS: this.editedItem.seriaAndNumberSTS,
+            startOperationDate: this.editedItem.startOperationDate,
+            startOperationPicker: this.editedItem.startOperationPicker,
+            finishOperationDate: this.editedItem.finishOperationDate,
+            finishOperationPicker: this.editedItem.finishOperationPicker,
+            periodInsurancePolicyValidityDate: this.editedItem.periodInsurancePolicyValidityDate,
+            periodInsurancePolicyValidityPicker: this.editedItem.periodInsurancePolicyValidityPicker,
+            termValidityTODate: this.editedItem.termValidityTODate,
+            termValidityTOPicker: this.editedItem.termValidityTOPicker,
+            dateIssuedSTDate: this.editedItem.dateIssuedSTDate,
+            dateIssuedSTSPicker: this.editedItem.dateIssuedSTSPicker,
             token: localStorage.getItem('auth')
           }
         })

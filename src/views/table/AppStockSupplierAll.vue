@@ -88,7 +88,7 @@ import axios from "axios"
     name: 'AppStockSupplierAll',
     data: () => ({
       dialog: false,
-      status: ["Foo", "Bar", "Fizz", "Buzz"],
+      status: ["Поставщик", "Покупатель", "Автосервис"],
       headers: [
         {
           text: 'Название',
@@ -128,7 +128,7 @@ import axios from "axios"
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectCounteragentData"
+            url:"http://localhost:8081/selectCounteragentData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data
@@ -195,6 +195,7 @@ import axios from "axios"
                   address: this.editedItem.address,
                   contactPerson: this.editedItem.contactPerson,
                   note: this.editedItem.note,
+                  token: localStorage.getItem('auth'),
               }
           })
           this.desserts.push(this.editedItem)

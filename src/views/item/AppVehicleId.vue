@@ -62,7 +62,7 @@
           cols="12"
           md="8"
         >
-        <v-select :items="status" v-model="editedItem.category" label="Категория"></v-select>
+        <v-select :items="category" v-model="editedItem.category" label="Категория"></v-select>
         </v-col>
 
         <v-col
@@ -221,7 +221,7 @@
           <v-toolbar-title>Оборудование</v-toolbar-title>
          </v-col>
         <v-col cols="12" md="6">
-            <v-select :items="status" v-model="editedItem.tyreType" label="Тип шин"></v-select>
+            <v-select :items="tyreType" v-model="editedItem.tyreType" label="Тип шин"></v-select>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
@@ -458,7 +458,32 @@ import axios from "axios"
     data () {
       return {
             tabs: null,
-            status: ["Foo", "Bar", "Fizz", "Buzz"],
+            status: [
+              "Не выбрана",
+              "Cвободный", 
+              "Удалённый", 
+              "Неактивный", 
+              "Обслуживание",
+              "В аренде"
+              ],
+            tyreType: [
+              "Всесезонная",
+              "Летняя",
+              "Зимняя",
+              ],
+            category: [
+              "Не выбрана",
+              "Эконом",
+              "Комфорт",
+              "Комфорт+",
+              "Бизнес",
+              "VIP",
+              "Минивэн",
+              "Грузоперевозки",
+              "универсал",
+              "Микроавтобус",
+              "Автобус",
+              ],
             dialog: false,
             editedIndex: -1,
             editedItem:{

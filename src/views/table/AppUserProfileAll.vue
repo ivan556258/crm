@@ -220,8 +220,8 @@
                   groundsForContract: this.editedItem.groundsForContract,
           }
           })
-          this.desserts.push(this.editedItem)
         }
+        this.desserts.push(this.editedItem)
         this.close()
       },
     },
