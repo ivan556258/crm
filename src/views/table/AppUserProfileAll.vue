@@ -149,7 +149,7 @@
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectUserProfileData"
+            url:"http://localhost:8081/selectUserProfileData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data

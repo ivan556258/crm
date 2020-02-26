@@ -152,7 +152,16 @@ export default {
           else if(response.data == ""){
               alert("Не те данные")
           }
+          else if(response.data == "00"){
+            console.log(response.data)
+              this.show = true
+              setTimeout(function(){
+                this.show = false;
+            }, 2000);
+          }
           else{
+            console.log(5465465);
+            
             this.auth = response.data
             localStorage.auth = response.data
             location.href="/admin/main"
