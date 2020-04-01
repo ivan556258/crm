@@ -5,7 +5,7 @@
         <v-spacer></v-spacer>
           <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
           </template>   
     </v-toolbar>
 <template>
@@ -56,7 +56,11 @@
           cols="12"
           md="8"
         >
-        <v-select :items="owner" v-model="editedItem.owner" label="Владелец"></v-select>
+        <v-select 
+        :items="owner" 
+        :item-text="item => item.name"
+         v-model="editedItem.owner" 
+         label="Владелец"></v-select>
         </v-col>
          <v-col
           cols="12"
@@ -447,6 +451,11 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
+        <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные обновлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -485,6 +494,7 @@ import axios from "axios"
               "Автобус",
               ],
             owner: [],
+            ok: false,
             dialog: false,
             editedIndex: -1,
             editedItem:{
@@ -558,17 +568,13 @@ import axios from "axios"
             url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            let element = []
-            for (let index = 0; index < response.data.length; index++) {
-              element = [response.data[index].name];
-            }
-            this.owner = element
+            this.owner = response.data     
           })
           .catch(error => {
             console.log(error)
           }) 
       },
-      save () {
+      save (id) {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
@@ -581,7 +587,7 @@ import axios from "axios"
             picker: this.editedItem.picker,
             brand: this.editedItem.brand,
             model: this.editedItem.model,
-            owner: this.editedItem.owner,
+            owner: this.editedItem.owner[0],
             category: this.editedItem.category,
             autoRun: this.editedItem.autoRun,
             nameInsuranceCompany: this.editedItem.nameInsuranceCompany,
@@ -623,9 +629,21 @@ import axios from "axios"
             token: localStorage.getItem('auth')
           }
         })
+        this.ok = true
+        setTimeout(()=>{
+                    this.ok = false
+        }, 2000);
+        if(id === 1)
+        this.$router.push('/admin/Vehicle/all')
         }
-        this.close()
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>

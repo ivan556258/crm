@@ -60,13 +60,14 @@
              <v-select 
                         :items="auto" 
                         :item-text="item => item.model +'  '+ item.numberSymbol + '  ' + item.owner"
-                        item-value="_id" 
-                        v-model="auto" 
+                       
+                        item-value="_id"
+                        v-model="autoId" 
                         label="Автомобиль">
                     </v-select>
         </v-col>
         <v-col cols="12" md="8">
-             <v-select :items="typeJob" v-model="typeJob" label="Вид работ"></v-select>
+             <v-select :items="typeJob" v-model="typeJobChose" label="Вид работ"></v-select>
         </v-col>
         <v-col cols="12" md="8">
              <v-select :items="contragents" 
@@ -87,27 +88,61 @@
         <v-col cols="12" md="8">
            <v-switch v-model="foreginLicenceRegistration" class="ma-2" label="Иностранное свидетельство о регистрации"></v-switch>
         </v-col>
-        <v-col cols="12" md="8">
-            <v-btn color="primary" @click="addRow" class="mb-2 ml-1" >Запчасти со склада</v-btn>
-        </v-col>
+
         <v-col cols="12" md="8" v-for="(row, index) in parts" v-bind:key="index">
-          <v-text-field
-            v-model="row.title"
-            :counter="100"
-            label="Запчасть"
-            required
-          ></v-text-field>
+<v-autocomplete
+              v-model="row.title"
+              :disabled="isUpdating"
+              :items="people"
+              label="Запчасть"
+              item-text="name"
+              item-value="_id"
+            >
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                >
+                {{ data.item.name }}  {{ data.item.brand }} Артикул: {{data.item.article}}
+                </v-chip>
+              </template>
+              <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
+                <template v-else>
+                  <v-list-item-content>
+                    <v-list-item-title @click="select(data.item.summ, index)" v-html="data.item.name +' '+ data.item.brand + ' ' + 'Артикул: ' + data.item.article"></v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
            <v-text-field
             v-model="row.description"
             :counter="100"
+            @input="addEvent(summRepository[index], index)"
             label="Количество"
             required
           ></v-text-field>
-          <a v-on:click="removeElement(index);" style="color: red">Удалить</a>
-                  
+          <v-text-field
+            v-model="row.percent"
+            :counter="100"
+            @input="addEvent(summRepository[index], index)"
+            label="Надбавка парка"
+            required
+          ></v-text-field>
+<v-toolbar flat>
+<a v-on:click="removeElement(index);" style="color: red">Удалить</a>
+        
+        <v-spacer></v-spacer>
+          
+          <div style="background-color: orange;height: 2rem;padding: .4rem 1rem 1rem 1rem;text-align: -webkit-center; color: white;border-radius: 50px;">
+            {{summRepository[index]}}
+          </div>
+</v-toolbar>                
         </v-col>
         <v-col cols="12" md="8">
-            <v-btn color="primary"  @click="addOterRow" class="mb-2 ml-1" >Другие запчасти</v-btn>
+            <v-btn color="primary" @click="addRow" class="mb-2 ml-1" >Запчасти со склада</v-btn>
         </v-col>
         <v-col cols="12" md="8" v-for="(item, i) in otherPart" v-bind:key="i + 1000">
           <v-text-field
@@ -132,9 +167,59 @@
             v-model="item.price"
             :counter="100"
             label="Цена"
+            @input="otherPrice(summRepositoryOther[i], i)"
             required
           ></v-text-field>
-          <a v-on:click="removeOterElement(i);" style="color: red">Удалить</a>
+          <v-text-field
+            v-model="item.percent"
+            :counter="100"
+            @input="otherPrice(summRepositoryOther[i], i)"
+            label="Надбавка парка"
+            required
+          ></v-text-field>
+<v-toolbar flat>
+<a v-on:click="removeOterElement(i);" style="color: red">Удалить</a>
+        
+        <v-spacer></v-spacer>
+          
+          <div style="background-color: orange;height: 2rem;padding: .4rem 1rem 1rem 1rem;text-align: -webkit-center; color: white;border-radius: 50px;">
+            {{summRepositoryOther[i]}}
+          </div>
+</v-toolbar> 
+        </v-col>
+        <v-col cols="12" md="8">
+            <v-btn color="primary"  @click="addOterRow" class="mb-2 ml-1" >Другие запчасти</v-btn>
+        </v-col>
+         <v-col cols="12" md="8" v-for="(item, inx) in coastJobs" v-bind:key="inx + 2000">
+          <v-text-field
+            v-model="item.title"
+            :counter="100"
+            label="Наименование работ"
+            required
+          ></v-text-field>
+           <v-text-field
+            v-model="item.price"
+            :counter="100"
+            label="Стоимость работ"
+            @input="coastJobsFunc()"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="item.percent"
+            :counter="100"
+            @input="coastJobsFunc()"
+            label="Надбавка парка"
+            required
+          ></v-text-field>
+<v-toolbar flat>
+<a v-on:click="removeCoastJobs(inx);" style="color: red">Удалить</a>
+        
+        <v-spacer></v-spacer>
+
+</v-toolbar> 
+        </v-col>
+                 <v-col cols="12" md="8">
+        <v-btn color="primary"  @click="addCoastJob" class="mb-2 ml-1" >Работы и их стоимость</v-btn>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
@@ -162,7 +247,7 @@
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="coastJobs"
+            v-model="coastJobsAll"
             :counter="10"
             label="Стоимость работ"
             required
@@ -174,7 +259,7 @@
       </v-row>
     </v-container>
 </template>
-          </v-card-text>
+</v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
@@ -262,10 +347,17 @@ import axios from "axios"
         tabs: null,
         parts: [],
         otherPart:[],
+        summRepository: [],
+        summRepositoryOther: [],
+        summCoastJobs: [],
+        coastJobs: [],
+        autoId: "",
         index: null,
         status: ["Ожидание", "Оплачен", "Удален"],
+        statusChose: "",
         auto: null,
         typeJob: ["Ремонт", "Диагностика", "ДТП"],
+        typeJobChose : "",
         autoRun: null,
         rating: ["1", "2", "3", "4", "5"],
         listJobs: null,
@@ -273,8 +365,8 @@ import axios from "axios"
         contragents: null,
         statestatePassengerSeat: null,
         resultDyagnostic: null,
-        coastSparePart: null,
-        coastJobs: null,
+        coastSparePart: 0,
+        coastJobsAll: 0,
         statusRes: null,
         tyreBrand: null,
         bodyCabineDamage: null,
@@ -297,6 +389,14 @@ import axios from "axios"
         datePicker: new Date().toISOString(),
         dialog: false,
         editedIndex: -1,
+
+        autoUpdate: true,
+        isUpdating: false,
+        name: '',
+        people: [],
+        title: '',
+
+        summ: [],
       }
     },
     computed: {
@@ -308,6 +408,11 @@ import axios from "axios"
       },
     },
     watch: {
+      isUpdating (val) {
+        if (val) {
+          setTimeout(() => (this.isUpdating = false), 3000)
+        }
+      },
       dialog (val) {
         val || this.close()
       },
@@ -317,6 +422,17 @@ import axios from "axios"
     },
     methods: {
       initialize () {
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectNomenclatureIsPlaceData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.people = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
         axios({
             method: "get",
             url:"http://localhost:8081/selecAutomobileData?token="+localStorage.getItem('auth')
@@ -339,14 +455,82 @@ import axios from "axios"
             console.log(error)
           })
       },
+      select(data, item){
+        this.summRepository[item] = data
+        this.summ[item] = data
+      },
+      getSumm(data){
+        this.summRepository = data
+      },
+      otherPrice(summ, item){
+       let n = parseInt(this.otherPart[item].price)
+       let summEnd = parseInt(this.otherPart[item].howmuch)
+       this.summRepositoryOther[item] = n * summEnd
+       this.getSummPartAll()
+      },
+      getJobsAll(){
+        let summCoastJobs = 0
+        if (this.coastJobs !="" || this.coastJobs != [] || this.coastJobs != null) {
+        let arr = this.coastJobs
+            for (let index = 0; index < arr.length; index++) {
+              summCoastJobs = parseInt(summCoastJobs) + parseInt(arr[index].price)
+            }
+        }
+        return parseInt(summCoastJobs)
+      },
+      getSummPartAll(){
+        let summ = 0
+        let summOtherPart = 0
+
+        if (this.summRepository !="" || this.summRepository != [] || this.summRepository != null) {
+        let arr = this.summRepository
+            for (let index = 0; index < arr.length; index++) {
+              summ = parseInt(summ) + parseInt(arr[index])
+            }
+        }
+
+        if (this.summRepositoryOther !="" || this.summRepositoryOther != [] || this.summRepositoryOther != null) {
+        let arr = this.summRepositoryOther
+            for (let index = 0; index < arr.length; index++) {
+              summOtherPart = parseInt(summOtherPart) + parseInt(arr[index])
+            }
+        }
+        
+        this.coastSparePart = parseInt(summ) + parseInt(summOtherPart)
+        //return parseInt(summ) + parseInt(summOtherPart)
+      },
+      coastJobsFunc(){        
+        this.coastJobsAll = parseInt(this.getJobsAll())
+      },
+      coastOtherPartFunc(){        
+        this.coastSparePart = parseInt(this.getSummPartAll())
+      },
+      addEvent(summ, item){
+        let n = parseInt(this.parts[item].description)
+        let summEnd = parseInt(this.summ[item])        
+        this.summRepository[item] = summEnd * n
+        this.getSummPartAll()
+      },
+      remove (item) {
+       this.friends.splice(item, 1)
+      },
+      addCoastJob(){
+            this.coastJobs.push({
+                title: "",
+                price: "",
+                percent: "",
+              })
+            },
       addRow() {
             this.parts.push({
                 title: "",
                 description: "",
+                percent: "",
               })
             },
       removeElement(index) {
-            this.rows.splice(index, 1);
+            this.parts.splice(index, 1);
+            this.summRepository.splice(index, 1);
       },
       addOterRow() {
             this.otherPart.push({
@@ -354,6 +538,7 @@ import axios from "axios"
                 articale: "",
                 howmuch: "",
                 price: "",
+                percent: "",
               })
             },
       removeOterElement(index) {
@@ -364,10 +549,6 @@ import axios from "axios"
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Вы уверены, что хотите удалить ?') && this.desserts.splice(index, 1)
-      },
       close () {
         this.dialog = false
         setTimeout(() => {
@@ -375,15 +556,11 @@ import axios from "axios"
           this.editedIndex = -1
         }, 300)
       },
-      factoryParts(){
-        alert()
-      },
       save () {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
           console.log(JSON.stringify(this.rows))
-          console.log(this.auto)
         axios({
           method: 'post',
           url: 'http://localhost:8081/insertTechnicalServiceData',
@@ -391,8 +568,8 @@ import axios from "axios"
               parts: JSON.stringify(this.parts),
               otherPart: JSON.stringify(this.otherPart),
               items: this.items,
-              auto: this.auto,
-              typeJob: this.typeJob,
+              auto: this.autoId,
+              typeJob: this.typeJobChose,
               autoRun: this.autoRun,
               listJobs: this.listJobs,
               contragent: this.contragent,
@@ -418,6 +595,8 @@ import axios from "axios"
               stateTyre: this.stateTyre,
               foreginLicenceRegistration: this.foreginLicenceRegistration,
               dateData: this.dateData,
+              free: "2",
+              token: localStorage.getItem('auth'),
           }
         })
         .then(response => {
@@ -426,9 +605,15 @@ import axios from "axios"
           .catch(error => {
             console.log(error)
           })
+
+////////////////////////////////
+////////////////////////////////
+         
+       
+          
         
         }
-        this.close()
+        //this.close()
       },
     },
   }

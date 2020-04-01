@@ -53,11 +53,15 @@ export default new VueRouter({
     {
       path: '/admin/main',
       name: 'Главная',
-      component: AppMain
+      component: AppMain,
+      meta: {
+        requiresAuth: true,
+        is_admin : true
+        }
     },
     {
       path: '/admin/Vehicle/all',
-      name: 'Автомобили',
+      name: 'automobiles',
       component: AppVehicleAll
     },
     {
@@ -252,7 +256,7 @@ export default new VueRouter({
     },
     {
       path: '/admin/auth',
-      name: 'авторизация',
+      name: 'auth',
       component: AppAuth
     },
     {

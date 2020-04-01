@@ -1,5 +1,5 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
+  <v-data-table :headers="headers" :items="desserts" :search="search" sort-by="calories" class="elevation-1">
     <template v-slot:top>
       <v-toolbar-title class="ml-3 mt-2">Панель управления</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -58,11 +58,25 @@
             <v-btn text>Подробнее</v-btn>
           </v-card-actions>
         </v-card>
+
       </div>
 
       <v-toolbar flat color="white">
         <v-toolbar-title>Договоры аренды</v-toolbar-title>
         <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+  <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/UserDriverProfile/create">{{formDriveTitle}}</v-btn>
@@ -197,8 +211,10 @@ export default {
     picker: new Date().toISOString(),
     auto: [],
     drivers: [],
+    search: "",
     tariff: "",
     status: "",
+    items: "",
     continues: false,
     headers: [
       {
@@ -219,6 +235,7 @@ export default {
     desserts: [],
     editedIndex: -1,
     editedItem: {
+      desserts:[],
       _id: null,
       beginmenu: null,
       driverPhone: null,
@@ -291,7 +308,6 @@ methods: {
           })
           .then(response => {
             this.drivers = response.data 
-            
           })
           .catch(error => {
             console.log(error)
@@ -314,7 +330,6 @@ methods: {
           })
           .then(response => {
             this.auto = response.data
-            console.log(response.data)
           })
           .catch(error => {
             console.log(error)
@@ -418,5 +433,11 @@ methods: {
 .bg-style-job{
     color: rgb(123, 109, 109);
     font-weight: bold!important
+}
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
 }
 </style>

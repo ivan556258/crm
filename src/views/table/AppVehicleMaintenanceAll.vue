@@ -1,8 +1,11 @@
 <template>
   <v-data-table
     :headers="headers"
+    :search="search"
     :items="desserts"
-    sort-by="calories"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
     class="elevation-1"
   >
     <template v-slot:top>
@@ -48,18 +51,26 @@
   
       <v-toolbar flat color="white">
         <v-toolbar-title>Техобслуживание</v-toolbar-title>
-        <v-spacer></v-spacer>
+         <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+<v-spacer></v-spacer>
           <template>
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/VehicleMaintenance/create">{{formDriveTitle}}</v-btn>
           </template>
       </v-toolbar>
     </template>
 
-
-
-
-    
-    
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -84,6 +95,7 @@ import axios from "axios";
     name: 'AppVehicleMaintenanceAll',
     data: () => ({
       dialog: false,
+      search:"",
       headers: [
         {
           text: 'Дата',
@@ -176,3 +188,11 @@ import axios from "axios";
     },
   }
 </script>
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>

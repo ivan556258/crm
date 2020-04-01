@@ -1,10 +1,19 @@
 <template>
   <v-data-table
     :headers="headers"
+    :search="search"
     :items="desserts"
-    sort-by="calories"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
     class="elevation-1"
   >
+      <template v-slot:item.isPart="{ item }">
+        <v-chip :color="getColor(item.isPart)" dark>
+          <div v-if="item.isPart">да</div>
+          <div v-else>нет</div>
+          </v-chip>
+      </template>
     <template v-slot:top>
 <div class="d-flex">
 <v-card
@@ -22,9 +31,22 @@
 </div>
   
       <v-toolbar flat color="white">
-        <v-toolbar-title>Номенклатура</v-toolbar-title>
+        <v-toolbar-title>Запчасти (склад)</v-toolbar-title>
         
-        <v-spacer></v-spacer>
+         <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+<v-spacer></v-spacer>
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
@@ -33,9 +55,8 @@
           
           <v-card>
             <v-card-title>
-              <span class="headline">Номенклатура</span>
+              <span class="headline">Запчасти (склад)</span>
             </v-card-title>
-
             <v-card-text>
               <v-container>
                 <v-row>
@@ -47,6 +68,15 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.article" label="Артикул"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                      <v-switch class="ma-2" v-model="editedItem.isPart" label="В наличи запчасть"></v-switch>
+                   </v-col>
+                   <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.summ" label="Сумма"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.howMuch" label="Кол-во шт"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -85,6 +115,11 @@ import axios from "axios"
     name: 'AppStockAll',
     data: () => ({
       dialog: false,
+      loading: false,
+      searchTable: null,
+      select: null,
+      states: [],
+      search:'',
       headers: [
         {
           text: 'Название',
@@ -92,11 +127,12 @@ import axios from "axios"
           sortable: false,
           value: 'name',
         },
-        { text: 'Бренд', value: 'brand' },
-        { text: 'Артикул', value: 'article' },
-        { text: 'Время создания', value: 'protein' },
-        { text: 'Наличие', value: 'actions', sortable: false },
-        { text: 'Общая сумма', value: 'actison', sortable: false },
+        { text: 'Бренд', value: 'brand'},
+        { text: 'Артикул', value: 'article', sortable: false  },
+        { text: 'Время создания', value: 'dateInsert' },
+        { text: 'Наличие', value: 'isPart'},
+        { text: 'Цена 1 шт', value: 'summ'},
+        { text: 'Кол-во шт', value: 'howMuch'},
         { text: 'Действия', value: 'action', sortable: false },
       ],
       desserts: [],
@@ -105,6 +141,11 @@ import axios from "axios"
         name: '',
         brand: '',
         article: '',
+        YesOrNo:'',
+        howMuch:'',
+        isPart: false,
+        summ: '',
+        insertTime:'',
       },
     }),
     watch: {
@@ -119,7 +160,7 @@ import axios from "axios"
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectNomenclatureData"
+            url:"http://localhost:8081/selectNomenclatureData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.desserts = response.data
@@ -128,6 +169,20 @@ import axios from "axios"
             console.log(error)
           })
       },
+      getColor (yes) {
+        if (yes) return 'green'
+        else return 'red'
+      },
+      querySelections (v) {
+        this.loading = true
+        // Simulated ajax query
+        setTimeout(() => {
+          this.items = this.states.filter(e => {
+            return (e || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+          })
+          this.loading = false
+        }, 500)
+      },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -135,7 +190,10 @@ import axios from "axios"
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        let isDelete = false
+        isDelete = confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        if(isDelete === false)
+        return 
         axios({
             method: "post",
             url:"http://localhost:8081/deleteNomenclatureData",
@@ -161,8 +219,11 @@ import axios from "axios"
                   name: this.editedItem.name,
                   brand: this.editedItem.brand,
                   article: this.editedItem.article,
-                _id: this.editedItem._id,
-                 
+                  isPart: this.editedItem.isPart,
+                  summ: this.editedItem.summ,
+                  howMuch: this.editedItem.howMuch,
+                  _id: this.editedItem._id,
+                  token: localStorage.getItem('auth')
             }
         })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
@@ -174,6 +235,10 @@ import axios from "axios"
                   name: this.editedItem.name,
                   brand: this.editedItem.brand,
                   article: this.editedItem.article,
+                  isPart: this.editedItem.isPart,
+                  summ: this.editedItem.summ,
+                  howMuch: this.editedItem.howMuch,
+                  token: localStorage.getItem('auth')
               }
            })
           this.desserts.push(this.editedItem)
@@ -183,3 +248,11 @@ import axios from "axios"
     },
   }
 </script>
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>

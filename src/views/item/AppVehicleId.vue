@@ -5,7 +5,7 @@
         <v-spacer></v-spacer>
           <template>
             <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
           </template>   
     </v-toolbar>
 <template>
@@ -20,7 +20,6 @@
         <v-tab> Регистрационные данные </v-tab>
       </v-tabs>
     </v-toolbar>
-
     <v-tabs-items v-model="tabs">
       <v-tab-item>
         <v-card flat>
@@ -56,7 +55,12 @@
           cols="12"
           md="8"
         >
-        <v-select :items="status" v-model="editedItem.owner" label="Владелец"></v-select>
+        
+        <v-select 
+        :items="owner" 
+        :item-text="item => item.name"
+         v-model="editedItem.owner" 
+         label="Владелец"></v-select>
         </v-col>
          <v-col
           cols="12"
@@ -447,6 +451,11 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
+        <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные обновлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -466,6 +475,7 @@ import axios from "axios"
               "Обслуживание",
               "В аренде"
               ],
+            ok: false,
             tyreType: [
               "Всесезонная",
               "Летняя",
@@ -485,6 +495,7 @@ import axios from "axios"
               "Автобус",
               ],
             dialog: false,
+            owner:[],
             editedIndex: -1,
             editedItem:{
                 dateIssuedSTSMenu: null,
@@ -554,32 +565,47 @@ import axios from "axios"
       initialize () {
         axios({
             method: "get",
-            url:"http://localhost:8081/selectAutomobileDataOne?id="+this.$route.params.id
+            url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            this.editedItem = response.data
+            let element = []
+            for (let index = 0; index < response.data.length; index++) {
+               element[index] = [response.data[index].name];
+            }
+            this.owner = response.data
+            console.log(this.owner);
+            console.log("/////////");
+            console.log(element);
+            console.log("/////////");
+            console.log(response.data);
+            
+            
+        
           })
           .catch(error => {
             console.log(error)
           })
+
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectAutomobileDataOne?id="+this.$route.params.id
+          })
+          .then(response => {
+            this.editedItem = response.data
+            //console.log(this.editedItem.owner)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+          ///////////////////
+            
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-      save () {
+      save (id) {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
@@ -633,9 +659,21 @@ import axios from "axios"
             dateIssuedSTSPicker: this.editedItem.dateIssuedSTSPicker
           }
         })
+        this.ok = true
+        setTimeout(()=>{
+                    this.ok = false
+        }, 2000);
+        if(id === 1)
+        this.$router.push('/admin/Vehicle/all')
         }
-        this.close()
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>

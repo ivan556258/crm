@@ -1,11 +1,11 @@
 <template>
-  <div v-if="auth != 'null'">
+  <div v-if="auth != undefined">
     <v-app id="keep">
       <v-app-bar app clipped-left color="amber">
         <v-app-bar-nav-icon @click="drawer = !drawer" />
         <span class="title ml-3 mr-5">
-          Компания&nbsp;
-          <span class="font-weight-light">"ООО "АВТО ДРАЙВ"</span>
+         TAKE&nbsp;
+          <span class="font-weight-light">TAXI</span>
         </span>
         <v-text-field solo-inverted flat hide-details label="Поиск по CRM" />
 
@@ -44,7 +44,7 @@
             </v-list-item>
           </template>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="directions_car">
             <template v-slot:activator>
               <v-list-item-title>Автомобили</v-list-item-title>
             </template>
@@ -72,7 +72,7 @@
             </v-list-item>
           </template>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="people_alt">
             <template v-slot:activator>
               <v-list-item-title>Пользователи</v-list-item-title>
             </template>
@@ -89,7 +89,7 @@
             </template>
           </v-list-group>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="attach_money">
             <template v-slot:activator>
               <v-list-item-title>Касса</v-list-item-title>
             </template>
@@ -106,7 +106,7 @@
             </template>
           </v-list-group>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="scatter_plot">
             <template v-slot:activator>
               <v-list-item-title>Билдинг</v-list-item-title>
             </template>
@@ -123,7 +123,7 @@
             </template>
           </v-list-group>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="local_convenience_store">
             <template v-slot:activator>
               <v-list-item-title>Гараж</v-list-item-title>
             </template>
@@ -140,7 +140,7 @@
             </template>
           </v-list-group>
 
-          <v-list-group prepend-icon="account_circle">
+          <v-list-group prepend-icon="show_chart">
             <template v-slot:activator>
               <v-list-item-title>Статистика</v-list-item-title>
             </template>
@@ -203,179 +203,180 @@ export default {
       {
         route: "/admin/Vehicle/all",
         text: "Автомобили",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/VehicleMaintenance/all",
         text: "Техобслуживание",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/VehicleSms/all",
         text: "Двигатель",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/VehicleOwner/all",
         text: "Владельцы",
-        icon: "waves"
+        icon: ""
       }
     ],
     conatactAll: [
       {
         route: "/admin/ContractAll",
         text: "Договоры аренды",
-        icon: "waves"
+        icon: "markunread_mailbox"
       }
     ],
     users: [
       {
         route: "/admin/UserDriverProfile/all",
         text: "Клиенты",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/UserProfile/all",
         text: "Сотрудники",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/UserComment/all",
         text: "Комментарии",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/UserSms/all",
         text: "История SMS",
-        icon: "waves"
+        icon: ""
       }
     ],
     cashbox: [
       {
         route: "/admin/Account/all",
         text: "Счета",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/AccountBill/all",
         text: "Приход-расход",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/AccountBillItem/all",
         text: "Статьи",
-        icon: "waves"
+        icon: ""
       }
     ],
     billing: [
       {
         route: "/admin/Bill/all",
         text: "Транзакции",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/FineBillGrid/all",
         text: "Неоплаченые штрафы",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/BillItem/RentBillItemGrid/all",
         text: "Тарифы",
-        icon: "waves"
+        icon: ""
       }
     ],
     warehouse: [
       {
         route: "/admin/Stock/all",
-        text: "Номенклатура",
-        icon: "waves"
+        text: "Запчасти (склад)",
+        icon: ""
       },
       {
         route: "/admin/StockSupplier/all",
         text: "Контрагенты",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/StockInvoice/PurchaseInvoiceGrid/all",
         text: "Накладные приходные",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/StockInvoice/SalesInvoiceGrid/all",
         text: "Накладные расходные",
-        icon: "waves"
+        icon: ""
       }
     ],
     charts: [
       {
         route: "/admin/reports/MainReport",
         text: "Отчёт общий",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/reports/VehicleDriverReport",
         text: "Отчет по выручке в разрезе по водителям",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/reports/VehicleReport",
         text: "Отчет по автомобилям",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/reports/DriverReport",
         text: "Отчет по водителям",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/reports/StockReport",
         text: "Отчёт по складу",
-        icon: "waves"
+        icon: ""
       },
       {
         route: "/admin/reports/accountReport",
         text: "По кассовым счетам",
-        icon: "waves"
+        icon: ""
       }
     ],
     main: [
       {
         route: "/admin/main",
         text: "Главная",
-        icon: "waves"
+        icon: "home"
       }
     ],
     items: [
       {
         route: "/admin/gps_map",
         text: "Карта",
-        icon: "waves"
+        icon: "map"
       },
       {
         route: "/admin/UserCompanyBill/all",
         text: "Платежи",
-        icon: "waves"
+        icon: "credit_card"
       },
       {
         route: "/admin/UserCompany/",
         text: "Настройки",
-        icon: "waves"
+        icon: "build"
       },
       {
         route: "/admin/content/support",
         text: "Поддержка",
-        icon: "waves"
+        icon: "feedback"
       }
     ]
   }),
+  
   mounted() {
     if (localStorage.auth) {
       this.auth = localStorage.auth
     }
   },
   created() {
-   if(this.auth === null || this.auth == 'null'){
-     this.$router.push({ path: `/admin/auth` })
+   if(this.auth === null || this.auth == '' || this.auth === undefined){
+     this.$router.push('auth')
    }
   },
   watch: {
@@ -385,7 +386,7 @@ export default {
   },
   methods:{
     logout(){
-      localStorage.auth = null
+      delete localStorage.auth 
       location.href="/admin/auth"
     }
   }
@@ -394,6 +395,19 @@ export default {
 <style scoped>
 #keep .v-navigation-drawer__border {
   display: none;
+}
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>
+<style>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
 }
 </style>
 

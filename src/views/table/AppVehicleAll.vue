@@ -1,10 +1,33 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :search="search"
+    :items="desserts"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
+    class="elevation-1"
+  >
     <template v-slot:top>
 
       <v-toolbar flat color="white">
         <v-toolbar-title>Автомобили</v-toolbar-title>
-        <v-spacer></v-spacer>
+
+<v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+<v-spacer></v-spacer>
+
           <template>
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/auto/create">{{addAuto}}</v-btn>
           </template>
@@ -24,6 +47,7 @@ export default {
   name: "AppMain",
   data: () => ({
     dialog: false,
+    search: "",
     beginmenu: null,
     number: null,
     endmenu: null,
@@ -102,7 +126,10 @@ export default {
     },
     deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        let isDelete = false
+        isDelete = confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        if(isDelete === false)
+        return 
         axios({
             method: "post",
             url:"http://localhost:8081/deleteAutomobileData",
@@ -115,3 +142,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>

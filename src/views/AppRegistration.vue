@@ -146,13 +146,13 @@ export default {
           browser: this.get_name_browser()
         }
       })
-        .then(response => {
-          console.log(response);
-          this.$router.push({ path: `/admin/auth` })
+       /*  .then(response => {
+          alert(5);
+          //this.$router.push({ path: `/admin/auth` })
         })
         .catch(function() {
           console.log("FAILURE!!");
-        });
+        }); */
     }
   }
 };

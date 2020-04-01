@@ -1,15 +1,34 @@
 <template>
   <v-data-table
     :headers="headers"
+    :search="search"
     :items="desserts"
-    sort-by="calories"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
     class="elevation-1"
   >
+    <template v-slot:item.summ="{ item }">
+      <v-chip :color="getColor(item.tariff)" dark>{{ item.summ }}</v-chip>
+    </template>
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title>Транзакции</v-toolbar-title>
         
-        <v-spacer></v-spacer>
+ <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+<v-spacer></v-spacer>
         
         <v-dialog v-model="dialog" max-width="100%">
           <template v-slot:activator="{ on }">
@@ -87,6 +106,7 @@ import axios from "axios"
       dialog: false,
       drivers: [],
       tariff: "",
+      search: "",
       driverName: [],
       driverId: [],
       headers: [
@@ -100,7 +120,7 @@ import axios from "axios"
         { text: 'Сумма', value: 'summ' },
         { text: 'Описание', value: 'description' },
         { text: 'Время создания', value: 'dateInsert', sortable: false },
-        { text: 'Статус', value: 'addTransaction', sortable: false },
+        //{ text: 'Статус', value: 'addTransaction', sortable: false },
         { text: 'Создатель', value: 'autor', sortable: false },
         { text: 'Действия', value: 'action', sortable: false },
       ],
@@ -165,6 +185,12 @@ import axios from "axios"
             console.log(error)
           })
       },
+      getColor (score) {
+        console.log(score);
+        
+        if (score === "Зарплата") return 'green'
+        else return 'red'
+      },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -172,7 +198,10 @@ import axios from "axios"
       },
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        let isDelete = false
+        isDelete = confirm('Вы уверены, что хотите удалить?') && this.desserts.splice(index, 1)
+        if(isDelete === false)
+        return 
         axios({
             method: "post",
             url:"http://localhost:8081/deleteTransactionData",
@@ -223,3 +252,11 @@ import axios from "axios"
     },
   }
 </script>
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>
