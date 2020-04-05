@@ -568,19 +568,7 @@ import axios from "axios"
             url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            let element = []
-            for (let index = 0; index < response.data.length; index++) {
-               element[index] = [response.data[index].name];
-            }
-            this.owner = response.data
-            console.log(this.owner);
-            console.log("/////////");
-            console.log(element);
-            console.log("/////////");
-            console.log(response.data);
-            
-            
-        
+            this.owner = response.data        
           })
           .catch(error => {
             console.log(error)
@@ -592,13 +580,10 @@ import axios from "axios"
           })
           .then(response => {
             this.editedItem = response.data
-            //console.log(this.editedItem.owner)
           })
           .catch(error => {
             console.log(error)
-          })
-          ///////////////////
-            
+          })    
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)

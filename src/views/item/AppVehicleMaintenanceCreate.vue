@@ -87,8 +87,10 @@
         </v-col>
         <v-col cols="12" md="8">
            <v-switch v-model="foreginLicenceRegistration" class="ma-2" label="Иностранное свидетельство о регистрации"></v-switch>
+        </v-col>  
+        <v-col cols="12" md="8">
+            <p class="subtitle-1">Запчасти со склада</p>
         </v-col>
-
         <v-col cols="12" md="8" v-for="(row, index) in parts" v-bind:key="index">
 <v-autocomplete
               v-model="row.title"
@@ -142,7 +144,12 @@
 </v-toolbar>                
         </v-col>
         <v-col cols="12" md="8">
-            <v-btn color="primary" @click="addRow" class="mb-2 ml-1" >Запчасти со склада</v-btn>
+            <v-btn @click="addRow" class="mx-2" fab dark color="indigo">
+              <v-icon dark>mdi-plus</v-icon>
+            </v-btn>
+        </v-col>
+        <v-col cols="12" md="8">
+            <p class="subtitle-1">Другие запчасти</p>
         </v-col>
         <v-col cols="12" md="8" v-for="(item, i) in otherPart" v-bind:key="i + 1000">
           <v-text-field
@@ -187,9 +194,17 @@
           </div>
 </v-toolbar> 
         </v-col>
+        
+      <v-col cols="12" md="8">
+        <v-btn @click="addOterRow" class="mx-2" fab dark color="indigo">
+              <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
+      </v-col>
+
         <v-col cols="12" md="8">
-            <v-btn color="primary"  @click="addOterRow" class="mb-2 ml-1" >Другие запчасти</v-btn>
+            <p class="subtitle-1">Работы и их стоимость</p>
         </v-col>
+        
          <v-col cols="12" md="8" v-for="(item, inx) in coastJobs" v-bind:key="inx + 2000">
           <v-text-field
             v-model="item.title"
@@ -218,8 +233,10 @@
 
 </v-toolbar> 
         </v-col>
-                 <v-col cols="12" md="8">
-        <v-btn color="primary"  @click="addCoastJob" class="mb-2 ml-1" >Работы и их стоимость</v-btn>
+        <v-col cols="12" md="8">
+        <v-btn @click="addCoastJob" class="mx-2" fab dark color="indigo">
+              <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
@@ -465,17 +482,32 @@ import axios from "axios"
       otherPrice(summ, item){
        let n = parseInt(this.otherPart[item].price)
        let summEnd = parseInt(this.otherPart[item].howmuch)
+       let plusPercent = 0
+
        this.summRepositoryOther[item] = n * summEnd
+
+       if(this.otherPart[item].percent > 0){
+                plusPercent = parseInt(this.summRepositoryOther[item]) / 100 * this.otherPart[item].percent
+       }
+       this.summRepositoryOther[item] = this.summRepositoryOther[item] + plusPercent
        this.getSummPartAll()
       },
       getJobsAll(){
         let summCoastJobs = 0
+        let plusPercent = 0
         if (this.coastJobs !="" || this.coastJobs != [] || this.coastJobs != null) {
         let arr = this.coastJobs
             for (let index = 0; index < arr.length; index++) {
               summCoastJobs = parseInt(summCoastJobs) + parseInt(arr[index].price)
+            
+              if(arr[index].percent > 0){
+                plusPercent = parseInt(summCoastJobs) / 100 * arr[index].percent
+              }
             }
         }
+
+        summCoastJobs = parseInt(summCoastJobs) + parseInt(plusPercent)
+        
         return parseInt(summCoastJobs)
       },
       getSummPartAll(){
@@ -499,7 +531,7 @@ import axios from "axios"
         this.coastSparePart = parseInt(summ) + parseInt(summOtherPart)
         //return parseInt(summ) + parseInt(summOtherPart)
       },
-      coastJobsFunc(){        
+      coastJobsFunc(){      
         this.coastJobsAll = parseInt(this.getJobsAll())
       },
       coastOtherPartFunc(){        
@@ -507,8 +539,14 @@ import axios from "axios"
       },
       addEvent(summ, item){
         let n = parseInt(this.parts[item].description)
-        let summEnd = parseInt(this.summ[item])        
+        let summEnd = parseInt(this.summ[item])   
+        let plusPercent = 0
+
         this.summRepository[item] = summEnd * n
+        if(this.parts[item].percent > 0){
+                plusPercent= parseInt(this.summRepository[item]) / 100 * this.parts[item].percent
+        }
+        this.summRepository[item] = parseInt(this.summRepository[item]) + parseInt(plusPercent)
         this.getSummPartAll()
       },
       remove (item) {
@@ -518,19 +556,24 @@ import axios from "axios"
             this.coastJobs.push({
                 title: "",
                 price: "",
-                percent: "",
+                percent: 0,
               })
             },
       addRow() {
             this.parts.push({
                 title: "",
                 description: "",
-                percent: "",
+                percent: 0,
               })
             },
       removeElement(index) {
             this.parts.splice(index, 1);
             this.summRepository.splice(index, 1);
+            this.getSummPartAll()
+      },
+      removeCoastJobs(index) {
+            this.coastJobs.splice(index, 1);
+            this.coastJobsFunc()
       },
       addOterRow() {
             this.otherPart.push({
@@ -538,11 +581,13 @@ import axios from "axios"
                 articale: "",
                 howmuch: "",
                 price: "",
-                percent: "",
+                percent: 0,
               })
             },
       removeOterElement(index) {
             this.otherPart.splice(index, 1);
+            this.summRepositoryOther.splice(index, 1);
+            this.getSummPartAll()
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
