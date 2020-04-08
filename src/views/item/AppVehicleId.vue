@@ -451,7 +451,7 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
-        <div class="bottom-block-success" v-show="ok">
+      <div class="bottom-block-success" v-show="ok">
         <v-alert type="success">
           Данные обновлены
         </v-alert>

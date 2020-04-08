@@ -211,11 +211,6 @@ export default {
         icon: ""
       },
       {
-        route: "/admin/VehicleSms/all",
-        text: "Двигатель",
-        icon: ""
-      },
-      {
         route: "/admin/VehicleOwner/all",
         text: "Владельцы",
         icon: ""
@@ -231,7 +226,7 @@ export default {
     users: [
       {
         route: "/admin/UserDriverProfile/all",
-        text: "Клиенты",
+        text: "Водители",
         icon: ""
       },
       {

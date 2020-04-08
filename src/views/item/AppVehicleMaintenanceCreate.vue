@@ -5,8 +5,8 @@
         
         <v-spacer></v-spacer>
           <template>
-            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
           </template>  
     </v-toolbar>
 
@@ -93,7 +93,7 @@
         </v-col>
         <v-col cols="12" md="8" v-for="(row, index) in parts" v-bind:key="index">
 <v-autocomplete
-              v-model="row.title"
+              v-model="row.id"
               :disabled="isUpdating"
               :items="people"
               label="Запчасть"
@@ -114,11 +114,12 @@
                 </template>
                 <template v-else>
                   <v-list-item-content>
-                    <v-list-item-title @click="select(data.item.summ, index)" v-html="data.item.name +' '+ data.item.brand + ' ' + 'Артикул: ' + data.item.article"></v-list-item-title>
+                    <v-list-item-title @click="select(data.item.summ, data.item.name, data.item.brand, data.item.article, index)" v-html="data.item.name +' '+ data.item.brand + ' ' + 'Артикул: ' + data.item.article"></v-list-item-title>
                   </v-list-item-content>
                 </template>
               </template>
             </v-autocomplete>
+            
            <v-text-field
             v-model="row.description"
             :counter="100"
@@ -240,14 +241,6 @@
         </v-col>
         <v-col cols="12" md="8">
           <v-text-field
-            v-model="listJobs"
-            :counter="100"
-            label="Список работ и их стоимости"
-            required
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="8">
-          <v-text-field
             v-model="resultDyagnostic"
             :counter="100"
             label="Результаты диагностики"
@@ -351,6 +344,11 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
+      <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные добавлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -362,6 +360,7 @@ import axios from "axios"
     data () {
       return {
         tabs: null,
+        ok: false,
         parts: [],
         otherPart:[],
         summRepository: [],
@@ -450,6 +449,7 @@ import axios from "axios"
             console.log(error)
           })
 
+// automobiles 
         axios({
             method: "get",
             url:"http://localhost:8081/selecAutomobileData?token="+localStorage.getItem('auth')
@@ -461,6 +461,7 @@ import axios from "axios"
             console.log(error)
           })
 
+// contaragent
           axios({
             method: "get",
             url:"http://localhost:8081/selectCounteragentData?token="+localStorage.getItem('auth')
@@ -472,7 +473,8 @@ import axios from "axios"
             console.log(error)
           })
       },
-      select(data, item){
+      select(data, name, brand, article, item){
+        this.parts[item].title = name + ' ' + brand + ' ' + article
         this.summRepository[item] = data
         this.summ[item] = data
       },
@@ -561,6 +563,7 @@ import axios from "axios"
             },
       addRow() {
             this.parts.push({
+                id: "",
                 title: "",
                 description: "",
                 percent: 0,
@@ -601,17 +604,19 @@ import axios from "axios"
           this.editedIndex = -1
         }, 300)
       },
-      save () {
+      save (id) {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
-          console.log(JSON.stringify(this.rows))
+          console.log()
         axios({
           method: 'post',
           url: 'http://localhost:8081/insertTechnicalServiceData',
           data: {
               parts: JSON.stringify(this.parts),
               otherPart: JSON.stringify(this.otherPart),
+              coastJobs: JSON.stringify(this.coastJobs),
+              coastJobsAll: new String(this.coastJobsAll),
               items: this.items,
               auto: this.autoId,
               typeJob: this.typeJobChose,
@@ -620,8 +625,7 @@ import axios from "axios"
               contragent: this.contragent,
               statestatePassengerSeat: this.statestatePassengerSeat,
               resultDyagnostic: this.resultDyagnostic,
-              coastSparePart: this.coastSparePart,
-              coastJobs: this.coastJobs,
+              coastSparePart: new String(this.coastSparePart),
               statusRes: this.statusRes,
               tyreBrand: this.tyreBrand,
               bodyCabineDamage: this.bodyCabineDamage,
@@ -645,11 +649,17 @@ import axios from "axios"
           }
         })
         .then(response => {
-            response.data
-          })
-          .catch(error => {
+          response.data
+            this.ok = true
+            setTimeout(()=>{
+                        this.ok = false
+            }, 2000);
+            if(id === 1)
+            this.$router.push('/admin/VehicleMaintenance/all')
+        })
+        .catch(error => {
             console.log(error)
-          })
+        })
 
 ////////////////////////////////
 ////////////////////////////////
@@ -663,3 +673,10 @@ import axios from "axios"
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>
