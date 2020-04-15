@@ -5,8 +5,8 @@
         
         <v-spacer></v-spacer>
           <template>
-            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
           </template>  
     </v-toolbar>
 
@@ -60,7 +60,6 @@
         <v-select 
                         :items="auto" 
                         :item-text="item => item.model +'  '+ item.numberSymbol + '  ' + item.owner"
-                       
                         item-value="_id"
                         v-model="editedItem.auto" 
                         label="Автомобиль">
@@ -123,14 +122,14 @@
            <v-text-field
             v-model="row.description"
             :counter="100"
-            @input="addEvent(summRepository[index], index)"
+            @input="addEvent(index)"
             label="Количество"
             required
           ></v-text-field>
           <v-text-field
             v-model="row.percent"
             :counter="100"
-            @input="addEvent(summRepository[index], index)"
+            @input="addEvent(index)"
             label="Надбавка парка"
             required
           ></v-text-field>
@@ -138,10 +137,11 @@
 <a v-on:click="removeElement(index);" style="color: red">Удалить</a>
         
         <v-spacer></v-spacer>
-          
-          <div style="background-color: orange;height: 2rem;padding: .4rem 1rem 1rem 1rem;text-align: -webkit-center; color: white;border-radius: 50px;">
-            {{summRepository[index]}}
+         <div style="background-color: orange;height: 2rem;padding: .4rem 1rem 1rem 1rem;text-align: -webkit-center; color: white;border-radius: 50px;">
+            {{row.summEnd}}
           </div>
+          
+    
 </v-toolbar>                
         </v-col>
         <v-col cols="12" md="8">
@@ -152,7 +152,7 @@
         <v-col cols="12" md="8">
             <p class="subtitle-1">Другие запчасти</p>
         </v-col>
-        <v-col cols="12" md="8" v-for="(item, i) in otherPart" v-bind:key="i + 1000">
+        <v-col cols="12" md="8" v-for="(item, i) in editedItem.otherPart" v-bind:key="i + 1000">
           <v-text-field
             v-model="item.name"
             :counter="100"
@@ -175,13 +175,13 @@
             v-model="item.price"
             :counter="100"
             label="Цена"
-            @input="otherPrice(summRepositoryOther[i], i)"
+            @input="otherPrice(i)"
             required
           ></v-text-field>
           <v-text-field
             v-model="item.percent"
             :counter="100"
-            @input="otherPrice(summRepositoryOther[i], i)"
+            @input="otherPrice(i)"
             label="Надбавка парка"
             required
           ></v-text-field>
@@ -191,7 +191,7 @@
         <v-spacer></v-spacer>
           
           <div style="background-color: orange;height: 2rem;padding: .4rem 1rem 1rem 1rem;text-align: -webkit-center; color: white;border-radius: 50px;">
-            {{summRepositoryOther[i]}}
+            {{item.summEnd}}
           </div>
 </v-toolbar> 
         </v-col>
@@ -206,7 +206,7 @@
             <p class="subtitle-1">Работы и их стоимость</p>
         </v-col>
         
-         <v-col cols="12" md="8" v-for="(item, inx) in coastJobs" v-bind:key="inx + 2000">
+         <v-col cols="12" md="8" v-for="(item, inx) in editedItem.coastJobs" v-bind:key="inx + 2000">
           <v-text-field
             v-model="item.title"
             :counter="100"
@@ -252,7 +252,7 @@
             v-model="editedItem.coastSparePart"
             :counter="100"
             label="Стоимость запчастей"
-            required
+            disabled
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
@@ -260,7 +260,7 @@
             v-model="editedItem.coastJobsAll"
             :counter="10"
             label="Стоимость работ"
-            required
+            disabled
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
@@ -344,6 +344,11 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
+      <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные обнавлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -356,14 +361,13 @@ import axios from "axios"
       return {
         tabs: null,
         ok: false,
-        auto: "",
+        auto: [],
         status: ["Ожидание", "Оплачен", "Удален"],
         typeJob: ["Ремонт", "Диагностика", "ДТП"],
         rating: ["1", "2", "3", "4", "5"],
-        contragents: "",
-        parts: [],
+        contragents: [],
+        people: [],
         otherPart:[],
-        summRepository: [],
         summRepositoryOther: [],
         summCoastJobs: [],
         coastJobs: [],
@@ -411,15 +415,13 @@ import axios from "axios"
                 dateData: null,
                 datePicker: new Date().toISOString(),
                 autoUpdate: true,
-                isUpdating: false,
                 name: '',
-                people: [],
                 title: '',
                 summ: [],
-               
-              
         },
+        isUpdating: false,
         dialog: false,
+        summRepositorys: [],
         editedIndex: -1,
       }
     },
@@ -446,36 +448,17 @@ import axios from "axios"
             url:"http://localhost:8081/selectTechnicalServiceDataOne?id="+this.$route.params.id
           })
           .then(response => {
-            this.editedItem = response.data
-           /// console.log(this.editedItem.parts[0][0].Value); 
-            let arrs = this.editedItem.parts
-            let arr = []
-            let data = []
-             
-            for (let index = 0; index < arrs.length; index++) {
-                arr = arrs[index]
-              
-                for (let indx = 0; indx < arr.length; indx++) {
-                     if(arr[indx].Key == "title"){
-                        data[indx] = {title: arr[indx].Value}
-                     }
-                     if(arr[indx].Key == "description"){
-                       
-                       
-                        data[indx] = {title: arr[indx].Value}
-                     }
-                     if(arr[indx].Key == "percent"){
-                        data[indx] = {title: arr[indx].Value}
-                     }
-                     if(arr[indx].Key == "id"){
-                        data[indx] = {title: arr[indx].Value}
-                     }
-                          
-                }
+            this.editedItem = response.data   
+            this.coastJobsFunc()
+            
+            let array = this.editedItem.parts
+            let array2 = this.editedItem.otherPart
+            for (let index = 0; index < array.length; index++) {
+              this.summRepositorys.push(array[index].summEnd)
             }
-
-           // console.log(data);
-            this.editedItem.parts = data
+            for (let index = 0; index < array2.length; index++) {
+              this.summRepositoryOther.push(array2[index].summEnd)
+            }
             
           })
           .catch(error => {
@@ -505,127 +488,155 @@ import axios from "axios"
           .catch(error => {
             console.log(error)
           })
+
+// parts
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectNomenclatureIsPlaceData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.people = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       select(data, name, brand, article, item){
-        this.parts[item].title = name + ' ' + brand + ' ' + article
-        this.summRepository[item] = data
-        this.summ[item] = data
+        this.editedItem.parts[item].title = name + ' ' + brand + ' ' + article
+        this.editedItem.parts[item].summEnd =  new String(data)
+        this.editedItem.parts[item].summ = data
+        this.editedItem.parts[item].description = 1
+        this.editedItem.parts[item].percent = 0
       },
       getSumm(data){
         this.summRepository = data
       },
-      otherPrice(summ, item){
-       let n = parseInt(this.otherPart[item].price)
-       let summEnd = parseInt(this.otherPart[item].howmuch)
+      otherPrice(item){     
+       let n = parseInt(this.editedItem.otherPart[item].price)
+       let summEnd = parseInt(this.editedItem.otherPart[item].howmuch)
        let plusPercent = 0
 
        this.summRepositoryOther[item] = n * summEnd
 
-       if(this.otherPart[item].percent > 0){
-                plusPercent = parseInt(this.summRepositoryOther[item]) / 100 * this.otherPart[item].percent
+       if(this.editedItem.otherPart[item].percent > 0){
+                plusPercent = parseInt(this.summRepositoryOther[item]) / 100 * this.editedItem.otherPart[item].percent
        }
-       this.summRepositoryOther[item] = this.summRepositoryOther[item] + plusPercent
+       this.editedItem.otherPart[item].summEnd = this.summRepositoryOther[item] + plusPercent
+
+       this.editedItem.otherPart[item].summEnd = new String(this.editedItem.otherPart[item].summEnd)
+
        this.getSummPartAll()
       },
       getJobsAll(){
         let summCoastJobs = 0
-        let plusPercent = 0
-        if (this.coastJobs !="" || this.coastJobs != [] || this.coastJobs != null) {
-        let arr = this.coastJobs
+        let plusPercent = []
+        let summPercent = 0
+        if (this.editedItem.coastJobs !="" || this.editedItem.coastJobs != [] || this.editedItem.coastJobs != null) {
+        
+        let arr = this.editedItem.coastJobs
             for (let index = 0; index < arr.length; index++) {
               summCoastJobs = parseInt(summCoastJobs) + parseInt(arr[index].price)
             
               if(arr[index].percent > 0){
-                plusPercent = parseInt(summCoastJobs) / 100 * arr[index].percent
+                plusPercent[index] = parseInt(arr[index].price) / 100 * arr[index].percent
               }
+            
+
             }
         }
+        for (let index = 0; index < plusPercent.length; index++) {
+              summPercent = parseInt(summPercent) + plusPercent[index]
+        }
 
-        summCoastJobs = parseInt(summCoastJobs) + parseInt(plusPercent)
-        
+        summCoastJobs = parseInt(summCoastJobs) + parseInt(summPercent)
+
         return parseInt(summCoastJobs)
       },
       getSummPartAll(){
         let summ = 0
-        let summOtherPart = 0
-
-        if (this.summRepository !="" || this.summRepository != [] || this.summRepository != null) {
-        let arr = this.summRepository
+        let summotherPart = 0
+        if (this.summRepositorys !="" || this.summRepositorys != [] || this.summRepositorys != null) {
+        let arr = this.summRepositorys
             for (let index = 0; index < arr.length; index++) {
               summ = parseInt(summ) + parseInt(arr[index])
             }
         }
+        
 
         if (this.summRepositoryOther !="" || this.summRepositoryOther != [] || this.summRepositoryOther != null) {
         let arr = this.summRepositoryOther
             for (let index = 0; index < arr.length; index++) {
-              summOtherPart = parseInt(summOtherPart) + parseInt(arr[index])
+              summotherPart = parseInt(summotherPart) + parseInt(arr[index])
             }
         }
         
-        this.coastSparePart = parseInt(summ) + parseInt(summOtherPart)
-        //return parseInt(summ) + parseInt(summOtherPart)
+        this.editedItem.coastSparePart = parseInt(summ) + parseInt(summotherPart)
+        //return parseInt(summ) + parseInt(summotherPart)
       },
       coastJobsFunc(){      
-        this.coastJobsAll = parseInt(this.getJobsAll())
+        this.editedItem.coastJobsAll = parseInt(this.getJobsAll())
       },
-      coastOtherPartFunc(){        
-        this.coastSparePart = parseInt(this.getSummPartAll())
+      coastotherPartFunc(){        
+        this.editedItem.coastSparePart = parseInt(this.getSummPartAll())
       },
-      addEvent(summ, item){
-        let n = parseInt(this.parts[item].description)
-        let summEnd = parseInt(this.summ[item])   
+      addEvent(item){
+        let n = parseInt(this.editedItem.parts[item].description)
+        let summ = parseInt(this.editedItem.parts[item].summ)   
         let plusPercent = 0
 
-        this.summRepository[item] = summEnd * n
-        if(this.parts[item].percent > 0){
-                plusPercent= parseInt(this.summRepository[item]) / 100 * this.parts[item].percent
+
+        this.summRepositorys[item] = summ * n
+        if(this.editedItem.parts[item].percent > 0){
+                plusPercent = parseInt(this.summRepositorys[item]) / 100 * this.editedItem.parts[item].percent
         }
-        this.summRepository[item] = parseInt(this.summRepository[item]) + parseInt(plusPercent)
+        this.summRepositorys[item] = parseInt(this.summRepositorys[item]) + parseInt(plusPercent)
+        this.editedItem.parts[item].summEnd = new String(this.summRepositorys[item])
         this.getSummPartAll()
       },
       remove (item) {
-       this.friends.splice(item, 1)
+       this.editedItem.friends.splice(item, 1)
       },
       addCoastJob(){
-            this.coastJobs.push({
+            this.editedItem.coastJobs.push({
                 title: "",
                 price: "",
                 percent: 0,
               })
             },
       addRow() {
-            this.parts.push({
+            this.editedItem.parts.push({
                 id: "",
                 title: "",
                 description: "",
                 percent: 0,
+                summEnd: 0,
+                summ: 0,
               })
-              console.log(this.parts);
             },
-      removeElement(index) {
-            this.parts.splice(index, 1);
-            this.summRepository.splice(index, 1);
-            this.getSummPartAll()
-      },
-      removeCoastJobs(index) {
-            this.coastJobs.splice(index, 1);
-            this.coastJobsFunc()
-      },
       addOterRow() {
-            this.otherPart.push({
+            this.editedItem.otherPart.push({
                 name: "",
                 articale: "",
                 howmuch: "",
                 price: "",
                 percent: 0,
+                summEnd: 0,
               })
             },
+      removeElement(index) {
+            this.editedItem.parts.splice(index, 1);
+            this.summRepositorys.splice(index, 1);
+            this.coastotherPartFunc()
+      },
+      removeCoastJobs(index) {
+            this.editedItem.coastJobs.splice(index, 1);
+            this.coastJobsFunc()
+      },
       removeOterElement(index) {
-            this.otherPart.splice(index, 1);
+            this.editedItem.otherPart.splice(index, 1);
             this.summRepositoryOther.splice(index, 1);
-            this.getSummPartAll()
+            this.coastotherPartFunc()
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -639,11 +650,16 @@ import axios from "axios"
           this.editedIndex = -1
         }, 300)
       },
-      save () {
+      save (id) {
         axios({
           method: 'post',
           url: 'http://localhost:8081/updateTechnicalServiceData',
           data: {
+              parts: JSON.stringify(this.editedItem.parts),
+              otherPart: JSON.stringify(this.editedItem.otherPart),
+              coastJobs: JSON.stringify(this.editedItem.coastJobs),
+              coastJobsAll: new String(this.editedItem.coastJobsAll),
+              items: this.editedItem.items,
               auto: this.editedItem.auto,
               typeJob: this.editedItem.typeJob,
               autoRun: this.editedItem.autoRun,
@@ -651,8 +667,7 @@ import axios from "axios"
               contragent: this.editedItem.contragent,
               statestatePassengerSeat: this.editedItem.statestatePassengerSeat,
               resultDyagnostic: this.editedItem.resultDyagnostic,
-              coastSparePart: this.editedItem.coastSparePart,
-              coastJobs: this.editedItem.coastJobs,
+              coastSparePart: new String(this.editedItem.coastSparePart),
               statusRes: this.editedItem.statusRes,
               tyreBrand: this.editedItem.tyreBrand,
               bodyCabineDamage: this.editedItem.bodyCabineDamage,
@@ -671,10 +686,28 @@ import axios from "axios"
               stateTyre: this.editedItem.stateTyre,
               foreginLicenceRegistration: this.editedItem.foreginLicenceRegistration,
               dateData: this.editedItem.dateData,
+              free: "2",
+              token: localStorage.getItem('auth'),
               _id: this.$route.params.id,
           }
+        })
+        .then(response => {
+          response.data
+            this.ok = true
+            setTimeout(()=>{
+                        this.ok = false
+            }, 2000);
+            if(id === 1)
+            this.$router.push('/admin/VehicleMaintenance/all')
         })
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>

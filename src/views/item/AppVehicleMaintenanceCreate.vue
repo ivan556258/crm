@@ -67,7 +67,11 @@
                     </v-select>
         </v-col>
         <v-col cols="12" md="8">
-             <v-select :items="typeJob" v-model="typeJobChose" label="Вид работ"></v-select>
+             <v-select 
+             :items="typeJob" 
+             :click="typeJobFunc()"
+             v-model="typeJobChose" 
+             label="Вид работ"></v-select>
         </v-col>
         <v-col cols="12" md="8">
              <v-select :items="contragents" 
@@ -123,14 +127,14 @@
            <v-text-field
             v-model="row.description"
             :counter="100"
-            @input="addEvent(summRepository[index], index)"
+            @input="addEvent(index)"
             label="Количество"
             required
           ></v-text-field>
           <v-text-field
             v-model="row.percent"
             :counter="100"
-            @input="addEvent(summRepository[index], index)"
+            @input="addEvent(index)"
             label="Надбавка парка"
             required
           ></v-text-field>
@@ -175,13 +179,13 @@
             v-model="item.price"
             :counter="100"
             label="Цена"
-            @input="otherPrice(summRepositoryOther[i], i)"
+            @input="otherPrice(i)"
             required
           ></v-text-field>
           <v-text-field
             v-model="item.percent"
             :counter="100"
-            @input="otherPrice(summRepositoryOther[i], i)"
+            @input="otherPrice(i)"
             label="Надбавка парка"
             required
           ></v-text-field>
@@ -202,7 +206,7 @@
         </v-btn>
       </v-col>
 
-        <v-col cols="12" md="8">
+        <v-col v-if="repair" cols="12" md="8">
             <p class="subtitle-1">Работы и их стоимость</p>
         </v-col>
         
@@ -235,16 +239,15 @@
 </v-toolbar> 
         </v-col>
         <v-col cols="12" md="8">
-        <v-btn @click="addCoastJob" class="mx-2" fab dark color="indigo">
+        <v-btn @click="addCoastJob" v-if="repair" class="mx-2" fab dark color="indigo">
               <v-icon dark>mdi-plus</v-icon>
         </v-btn>
         </v-col>
-        <v-col cols="12" md="8">
+        <v-col v-if="diagnostic" cols="12" md="8">
           <v-text-field
             v-model="resultDyagnostic"
             :counter="100"
             label="Результаты диагностики"
-            required
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
@@ -252,15 +255,15 @@
             v-model="coastSparePart"
             :counter="100"
             label="Стоимость запчастей"
-            required
+            disabled
           ></v-text-field>
         </v-col>
-        <v-col cols="12" md="8">
+        <v-col v-if="repair" cols="12" md="8">
           <v-text-field
             v-model="coastJobsAll"
             :counter="10"
             label="Стоимость работ"
-            required
+            disabled
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
@@ -360,6 +363,8 @@ import axios from "axios"
     data () {
       return {
         tabs: null,
+        diagnostic: false,
+        repair: false,
         ok: false,
         parts: [],
         otherPart:[],
@@ -438,6 +443,7 @@ import axios from "axios"
     },
     methods: {
       initialize () {
+// parts
           axios({
             method: "get",
             url:"http://localhost:8081/selectNomenclatureIsPlaceData?token="+localStorage.getItem('auth')
@@ -473,15 +479,29 @@ import axios from "axios"
             console.log(error)
           })
       },
+      typeJobFunc(){
+            if (this.typeJobChose == "Диагностика") {
+              this.diagnostic = true
+            } else {
+              this.diagnostic = false
+            }  
+
+            if (this.typeJobChose == "Ремонт") {
+              this.repair = true
+            } else {
+              this.repair = false
+            }  
+      },
       select(data, name, brand, article, item){
         this.parts[item].title = name + ' ' + brand + ' ' + article
         this.summRepository[item] = data
         this.summ[item] = data
+        this.parts[item].summ = new String(data)
       },
       getSumm(data){
         this.summRepository = data
       },
-      otherPrice(summ, item){
+      otherPrice(item){
        let n = parseInt(this.otherPart[item].price)
        let summEnd = parseInt(this.otherPart[item].howmuch)
        let plusPercent = 0
@@ -492,23 +512,31 @@ import axios from "axios"
                 plusPercent = parseInt(this.summRepositoryOther[item]) / 100 * this.otherPart[item].percent
        }
        this.summRepositoryOther[item] = this.summRepositoryOther[item] + plusPercent
+       this.otherPart[item].summEnd = new String(this.summRepositoryOther[item])
+       //this.otherPart[item].summEnd = this.summRepositoryOther[item]
        this.getSummPartAll()
       },
       getJobsAll(){
         let summCoastJobs = 0
-        let plusPercent = 0
+        let plusPercent = []
+        let summPercent = 0
         if (this.coastJobs !="" || this.coastJobs != [] || this.coastJobs != null) {
         let arr = this.coastJobs
             for (let index = 0; index < arr.length; index++) {
               summCoastJobs = parseInt(summCoastJobs) + parseInt(arr[index].price)
             
-              if(arr[index].percent > 0){
-                plusPercent = parseInt(summCoastJobs) / 100 * arr[index].percent
+             if(arr[index].percent > 0){
+                plusPercent[index] = parseInt(arr[index].price) / 100 * arr[index].percent
               }
+            
+
             }
         }
+        for (let index = 0; index < plusPercent.length; index++) {
+              summPercent = parseInt(summPercent) + plusPercent[index]
+        }
 
-        summCoastJobs = parseInt(summCoastJobs) + parseInt(plusPercent)
+        summCoastJobs = parseInt(summCoastJobs) + parseInt(summPercent)
         
         return parseInt(summCoastJobs)
       },
@@ -539,16 +567,17 @@ import axios from "axios"
       coastOtherPartFunc(){        
         this.coastSparePart = parseInt(this.getSummPartAll())
       },
-      addEvent(summ, item){
+      addEvent(item){
         let n = parseInt(this.parts[item].description)
         let summEnd = parseInt(this.summ[item])   
         let plusPercent = 0
 
         this.summRepository[item] = summEnd * n
         if(this.parts[item].percent > 0){
-                plusPercent= parseInt(this.summRepository[item]) / 100 * this.parts[item].percent
+                plusPercent = parseInt(this.summRepository[item]) / 100 * this.parts[item].percent
         }
         this.summRepository[item] = parseInt(this.summRepository[item]) + parseInt(plusPercent)
+        this.parts[item].summEnd = new String(this.summRepository[item])
         this.getSummPartAll()
       },
       remove (item) {
@@ -567,6 +596,18 @@ import axios from "axios"
                 title: "",
                 description: "",
                 percent: 0,
+                summ: "",
+                summEnd: 0,
+              })
+            },
+      addOterRow() {
+            this.otherPart.push({
+                name: "",
+                articale: "",
+                howmuch: "",
+                price: "",
+                percent: 0,
+                summEnd: 0,
               })
             },
       removeElement(index) {
@@ -578,15 +619,6 @@ import axios from "axios"
             this.coastJobs.splice(index, 1);
             this.coastJobsFunc()
       },
-      addOterRow() {
-            this.otherPart.push({
-                name: "",
-                articale: "",
-                howmuch: "",
-                price: "",
-                percent: 0,
-              })
-            },
       removeOterElement(index) {
             this.otherPart.splice(index, 1);
             this.summRepositoryOther.splice(index, 1);
@@ -607,8 +639,7 @@ import axios from "axios"
       save (id) {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          console.log()
+        } else {   
         axios({
           method: 'post',
           url: 'http://localhost:8081/insertTechnicalServiceData',
