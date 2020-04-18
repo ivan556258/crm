@@ -20,6 +20,7 @@
       >
         <v-tab> Информация </v-tab>
         <v-tab> Состояние ТС </v-tab>
+        <v-tab> Счёт </v-tab>
       </v-tabs>
     </v-toolbar>
 
@@ -96,7 +97,7 @@
             <p class="subtitle-1">Запчасти со склада</p>
         </v-col>
         <v-col cols="12" md="8" v-for="(row, index) in parts" v-bind:key="index">
-<v-autocomplete
+        <v-autocomplete
               v-model="row.id"
               :disabled="isUpdating"
               :items="people"
@@ -345,6 +346,47 @@
         </v-card>
         
       </v-tab-item>
+            <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+          <v-container>
+             <v-row>
+
+         <v-col cols="12" md="8">
+        <v-autocomplete
+              v-model="account"
+              :disabled="isUpdating"
+              :items="allPeople"
+              label="Фамилия кому отправить счёт"
+              item-text="lastname"
+              item-value="email"
+            >
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                >
+                {{ data.item.lastname }}  
+                </v-chip>
+              </template>
+              <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
+                <template v-else>
+                  <v-list-item-content>
+                    <v-list-item-title @click="select(data.item.lastname, index)" v-html="data.item.lastname"></v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
+        </v-col>
+              </v-row>
+    </v-container>
+          </v-card-text>
+        </v-card>
+        
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
       <div class="bottom-block-success" v-show="ok">
@@ -367,6 +409,7 @@ import axios from "axios"
         repair: false,
         ok: false,
         parts: [],
+        
         otherPart:[],
         summRepository: [],
         summRepositoryOther: [],
@@ -415,6 +458,7 @@ import axios from "axios"
         isUpdating: false,
         name: '',
         people: [],
+        allPeople: [],
         title: '',
 
         summ: [],
@@ -453,6 +497,19 @@ import axios from "axios"
           })
           .catch(error => {
             console.log(error)
+          })
+
+// all people 
+          axios({
+            method: "get",
+            url: "http://localhost:8081/selectAllUsersData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.allPeople = response.data
+          })
+          .catch(error => {
+            console.log(error)
+            
           })
 
 // automobiles 

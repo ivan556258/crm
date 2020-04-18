@@ -1,7 +1,7 @@
 <template>
  <div>
       <v-toolbar flat>
-        <v-toolbar-title>Добавление статьи</v-toolbar-title>
+        <v-toolbar-title>Добавление тариф</v-toolbar-title>
         <v-spacer></v-spacer>
             <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn> 
             <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>  
@@ -61,14 +61,14 @@
               ></v-text-field> 
             </v-col>
           
-            <v-col v-if="blockSumm == 'за каждый день'" cols="12" md="8">
+           <!--  <v-col v-if="blockSumm == 'за каждый день'" cols="12" md="8">
               <v-text-field
                 v-model="editedItem.summPerDay"
                 :counter="10"
                 label="Сумма за каждый день"
                 required
               ></v-text-field> 
-            </v-col>
+            </v-col> -->
             <v-col v-if="blockSumm == 'понедельный'" cols="12" md="8">
               <v-row>
                 <v-col cols="12" md="4">
@@ -134,14 +134,14 @@
            <v-select :items="status" v-model="editedItem.contractContinue" label="При продлении договора"></v-select>
         </v-col>  -->
 
-         <v-col cols="12" md="8">
+<!--          <v-col cols="12" md="8">
           <v-text-field
             v-model="editedItem.startPayment"
             :counter="10"
             label="Стартовый платёж"
             required
           ></v-text-field> 
-         </v-col>
+         </v-col> -->
       
          <v-col cols="12" md="8">
           <v-text-field

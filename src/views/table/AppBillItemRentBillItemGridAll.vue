@@ -10,7 +10,7 @@
 </div>
   
       <v-toolbar flat color="white">
-        <v-toolbar-title>Статьи</v-toolbar-title>
+        <v-toolbar-title>Тарифы</v-toolbar-title>
         <v-spacer></v-spacer>
           <template>
             <v-btn color="primary" class="mb-2 ml-1" to="/admin/BillItem/RentBillItemForm/create">Добавить тариф</v-btn>

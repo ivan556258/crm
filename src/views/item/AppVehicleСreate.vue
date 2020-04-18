@@ -4,7 +4,7 @@
         <v-toolbar-title>Редактирование автомобиля</v-toolbar-title>
         <v-spacer></v-spacer>
           <template>
-            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)">{{formAutoTitle}}</v-btn>
             <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
           </template>   
     </v-toolbar>
@@ -18,6 +18,7 @@
       >
         <v-tab> Информация </v-tab>
         <v-tab> Регистрационные данные </v-tab>
+        <v-tab> Комисии </v-tab>
       </v-tabs>
     </v-toolbar>
 
@@ -449,11 +450,39 @@
         </v-card>
         
       </v-tab-item>
+      <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <template>
+                  <v-container>
+                        <v-row>
+                                      <v-col cols="12" md="8">
+                                      <v-text-field
+                                          v-model="editedItem.commissionPerDay"
+                                          :counter="16"
+                                          label="Коммисия за сутки в рублях"
+                                          required
+                                      ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="8">
+                                      <v-text-field
+                                          v-model="editedItem.commissionPerTransacrion"
+                                          :counter="16"
+                                          label="Коммисия за транзакцию в процентах"
+                                          required
+                                      ></v-text-field>
+                                      </v-col>
+                        </v-row>
+                  </v-container>
+            </template>
+            </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
         <div class="bottom-block-success" v-show="ok">
         <v-alert type="success">
-          Данные обновлены
+          Данные добавлены
         </v-alert>
       </div>
 </template>
@@ -540,6 +569,8 @@ import axios from "axios"
                 periodInsurancePolicyValidityDate: null,
                 termValidityTODate: null,
                 dateIssuedSTDate: null,
+                commissionPerDay: null,
+                commissionPerTransacrion: null,
                 picker: new Date().toISOString(),
 
             }
@@ -568,7 +599,13 @@ import axios from "axios"
             url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            this.owner = response.data     
+            this.owner = response.data  
+            /* console.log(this.owner);
+            this.owner.push({
+              _id: "100",
+              name: "Таксопарк",
+              token: localStorage.getItem('auth')
+            })  */  
           })
           .catch(error => {
             console.log(error)
@@ -626,6 +663,8 @@ import axios from "axios"
             termValidityTOPicker: this.editedItem.termValidityTOPicker,
             dateIssuedSTDate: this.editedItem.dateIssuedSTDate,
             dateIssuedSTSPicker: this.editedItem.dateIssuedSTSPicker,
+            commissionPerDay: new String(this.editedItem.commissionPerDay),
+            commissionPerTransacrion: new String(this.editedItem.commissionPerTransacrion),
             token: localStorage.getItem('auth')
           }
         })

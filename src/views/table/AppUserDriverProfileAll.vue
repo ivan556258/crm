@@ -1,14 +1,30 @@
 <template>
   <v-data-table
     :headers="headers"
+    :search="search"
     :items="desserts"
-    sort-by="calories"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Клиенты</v-toolbar-title>
+        <v-toolbar-title>Водители</v-toolbar-title>
         <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
+      <v-spacer></v-spacer>
           <template>
             <v-btn color="primary" class="my-2 ml-1" to="/admin/UserDriverProfile/create">{{formDriveTitle}}</v-btn>
           </template>
@@ -38,12 +54,13 @@ import axios from "axios";
     name: 'AppVehicleMaintenanceAll',
     data: () => ({
       dialog: false,
+      search: "",
       headers: [
         {
-          text: 'ФИО',
+          text: 'Фамилия',
           align: 'left',
           sortable: false,
-          value: 'name',
+          value: 'lastname',
         },
         { text: 'Телефон', value: 'phone' },
         { text: 'Серия и номер', value: 'seriaAndNumberPassport' },
@@ -156,3 +173,11 @@ import axios from "axios";
     },
   }
 </script>
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>

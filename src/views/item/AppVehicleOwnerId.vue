@@ -7,8 +7,8 @@
         
        
           <template>
-            <v-btn color="success" class="mb-2" @click="save()">{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" @click="save()">{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)">{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)">{{formDriveTitle}}</v-btn>
        </template>
           
  
@@ -46,6 +46,14 @@
             v-model="editedItem.phone"
             :counter="20"
             label="Телефон"
+            required
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="8">
+          <v-text-field
+            v-model="editedItem.email"
+            :counter="20"
+            label="Email"
             required
           ></v-text-field>
         </v-col>
@@ -132,6 +140,11 @@
       </v-tab-item>
     </v-tabs-items>
   </v-card>
+      <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные обновлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -143,6 +156,7 @@ import axios from "axios";
     data () {
       return {
         tabs: null,
+        ok: false,
         status: ["Foo", "Bar", "Fizz", "Buzz"],
         dialog: false,
         editedItem: {
@@ -190,7 +204,7 @@ import axios from "axios";
             console.log(error)
           })
       },
-      save () {
+      save (id) {
          axios({
           method: 'post',
           url: 'http://localhost:8081/updateOwnerData',
@@ -198,6 +212,7 @@ import axios from "axios";
               _id: this.$route.params.id,
               name: this.editedItem.name,
               phone: this.editedItem.phone,
+              email: this.editedItem.email,
               contactPerson: this.editedItem.contactPerson,
               proceedings: this.editedItem.proceedings,
               groundsForContract: this.editedItem.groundsForContract,
@@ -209,8 +224,26 @@ import axios from "axios";
               conditionJobs: this.editedItem.conditionJobs,
           }
          })
-        
+       .then(response => {
+          response.data
+            this.ok = true
+            setTimeout(()=>{
+                        this.ok = false
+            }, 2000);
+            if(id === 1)
+            this.$router.push('/admin/UserDriverProfile/all')
+        })
+        .catch(error => {
+            console.log(error)
+        })
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>

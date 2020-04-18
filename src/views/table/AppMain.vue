@@ -92,9 +92,6 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.number" label="Номер"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
                         <v-select 
                              :items="drivers" 
                              :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
@@ -117,6 +114,7 @@
                               :items="tariff" 
                               :item-text="item => item.name"  
                               item-value="_id" 
+                              @change="tariffFunc(item._id, item.name, item.tariff, item.tariff,)"
                               v-model="editedItem.tariff" label="Тариф">
                   </v-select>
                   </v-col>
@@ -181,6 +179,12 @@
                   <v-col cols="12" sm="6" md="4">
                     <v-select :items="status" v-model="editedItem.status" label="Статус"></v-select>
                   </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                      <v-switch @change="individualFunc()" v-model="editedItem.individual" class="ma-2" label="Индивидуальные комисии"></v-switch>
+                  </v-col>
+                  <v-col v-if="editedItem.individual" cols="12" md="8">
+                      <v-select :items="selectTariff" @change="changeRoute()" v-model="editedItem.tariff" label="Тарифный план"></v-select>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -209,10 +213,10 @@ export default {
   data: () => ({
     dialog: false,
     picker: new Date().toISOString(),
+
     auto: [],
     drivers: [],
     search: "",
-    tariff: "",
     status: "",
     items: "",
     continues: false,
@@ -233,11 +237,13 @@ export default {
       { text: 'Действия', value: 'action', sortable: false },
     ],
     desserts: [],
+    tariff: [],
     editedIndex: -1,
     editedItem: {
       desserts:[],
       _id: null,
       beginmenu: null,
+      individual: false,
       driverPhone: null,
       number: null,
       endmenu: null,
@@ -251,12 +257,14 @@ export default {
       driverStr: null,
       tariffStr: null,
       status: null,
-      continues: false
+      continues: false,
+      blockSumm: null,
     },
     defaultItem: {
       _id: null,
       beginmenu: null,
       number: null,
+      individual: false,
       endmenu: null,
       enddate: null,
       begindate: null,
@@ -266,7 +274,8 @@ export default {
       tariff: null,
       driverPhone: null,
       status: null,
-      continues: false
+      continues: false,
+      blockSumm: null,
     }
   }),
   computed: {
@@ -291,6 +300,7 @@ export default {
   },
 methods: {
       initialize () {
+//
         axios({
             method: "get",
             url:"http://localhost:8081/selectContractData?token="+localStorage.getItem('auth')
@@ -302,23 +312,29 @@ methods: {
             console.log(error)
           })
 
+// tariff
+
+        axios({
+            method: "get",
+            url:"http://localhost:8081/selectTariffData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.tariff = response.data
+            console.log(this.tariff);
+            
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
+// driver
+
           axios({
             method: "get",
             url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.drivers = response.data 
-          })
-          .catch(error => {
-            console.log(error)
-          })
-
-           axios({
-            method: "get",
-            url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
-          })
-          .then(response => {
-            this.tariff = response.data
           })
           .catch(error => {
             console.log(error)
@@ -336,6 +352,9 @@ methods: {
           })
 
       },
+    changeRoute(){
+            this.editedItem.blockSumm = this.editedItem.tariff
+    },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
       this.editedItem = Object.assign({}, item);

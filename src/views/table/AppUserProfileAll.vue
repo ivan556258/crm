@@ -1,14 +1,30 @@
 <template>
   <v-data-table
     :headers="headers"
+    :search="search"
     :items="desserts"
-    sort-by="calories"
+    sort-by="dateInsert"
+    item-key="_id"
+    show-select
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
         <v-toolbar-title>Сотрудники</v-toolbar-title>
         
+        <v-spacer></v-spacer>
+  <v-card class="search">
+        <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Поиск по таблице"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+  </v-card>
         <v-spacer></v-spacer>
         
         <v-dialog v-model="dialog" max-width="100%">
@@ -91,6 +107,7 @@
     name: 'AppUserProfileAll',
     data: () => ({
       dialog: false,
+      search: "",
       status: [
           "активный", 
           "заблокированный", 
@@ -227,3 +244,11 @@
     },
   }
 </script>
+<style scoped>
+.search {
+    border: 0!important;
+    border-radius: 0!important;
+    width: 331px;
+    box-shadow: none;
+}
+</style>

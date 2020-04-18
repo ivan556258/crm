@@ -25,6 +25,7 @@
         <v-tab> Акт возврата автомобиля </v-tab>
         <v-tab> Обжалование </v-tab>
         <v-tab> Автопарк </v-tab>
+        <v-tab> Комисии </v-tab>
       </v-tabs>
     </v-toolbar>
 
@@ -234,6 +235,21 @@
           </v-card-text>
         </v-card>
       </v-tab-item>
+       <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <template>
+                  <v-container>
+                        <v-row>
+                            <v-col cols="12" md="8">
+                              
+                            </v-col>
+                        </v-row>
+                  </v-container>
+            </template>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
 </template>
@@ -336,7 +352,7 @@ import axios from "axios";
       initialize () {
          axios({
             method: "get",
-            url:"http://localhost:8081/selectUserCompanyData"
+            url:"http://localhost:8081/selectUserCompanyData?token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.editedItem = response.data
@@ -378,6 +394,7 @@ import axios from "axios";
                 informNeedChangeOli: this.editedItem.informNeedChangeOli,
                 templeteSMSFoo: this.editedItem.templeteSMSFoo,
                 templeteSMSFive: this.editedItem.templeteSMSFive,
+                token: localStorage.getItem('auth'),
                 _id: this.editedItem._id
             }
           })
@@ -413,7 +430,8 @@ import axios from "axios";
                 informNeedChangeOli: this.editedItem.informNeedChangeOli,
                 templeteSMSFoo: this.editedItem.templeteSMSFoo,
                 templeteSMSFive: this.editedItem.templeteSMSFive,
-                _id: this.editedItem._id
+                _id: this.editedItem._id,
+                token: localStorage.getItem('auth')
             }
           })
         }

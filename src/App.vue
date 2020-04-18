@@ -371,6 +371,7 @@ export default {
   },
   created() {
    if(this.auth === null || this.auth == '' || this.auth === undefined){
+     localStorage.auth = ''
      this.$router.push('auth')
    }
   },

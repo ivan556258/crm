@@ -1,7 +1,7 @@
 <template>
  <div>
       <v-toolbar flat>
-        <v-toolbar-title>Добавление статьи</v-toolbar-title>
+        <v-toolbar-title>Редактирование тарифа</v-toolbar-title>
         <v-spacer></v-spacer>
             <v-btn color="success" class="mb-2" @click="save()" >Сохранить</v-btn> 
             <v-btn color="primary" class="mb-2 ml-1" >Сохранить и выйти</v-btn>  

@@ -6,8 +6,8 @@
         <v-spacer></v-spacer>
         
           <template>
-            <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)" >{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)" >{{formDriveTitle}}</v-btn>
           </template> 
     </v-toolbar>
 
@@ -21,6 +21,7 @@
       >
         <v-tab> Профиль водителя </v-tab>
         <v-tab> Настройки </v-tab>
+        <v-tab> Комисия/Зарплата </v-tab>
       </v-tabs>
     </v-toolbar>
 
@@ -274,6 +275,14 @@
             required
           ></v-text-field> 
          </v-col>
+          <v-col cols="12" md="6">
+          <v-text-field
+            v-model="editedItem.pawn"
+            :counter="6"
+            label="Залог"
+            required
+          ></v-text-field> 
+         </v-col>
          <v-col cols="12" md="12">
           <v-toolbar-title>Дополнительные данные</v-toolbar-title>
          </v-col>
@@ -337,8 +346,41 @@
         </v-card>
         
       </v-tab-item>
+       <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <template>
+                  <v-container>
+                        <v-row>
+                            <v-col cols="12" md="8">
+                            <v-text-field
+                                v-model="editedItem.sallaryPerDay"
+                                :counter="16"
+                                label="Зарплата за сутки в рублях"
+                                required
+                            ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="8">
+                            <v-text-field
+                                v-model="editedItem.commissionPerTransacrion"
+                                :counter="16"
+                                label="Коммисия за транзакцию в процентах (в парк)"
+                                required
+                            ></v-text-field>
+                            </v-col>
+                        </v-row>
+                  </v-container>
+            </template>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
+      <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные обновлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -350,6 +392,7 @@
     data () {
       return {
         tabs: null,
+        ok: false,
         status: [
           "активный", 
           "заблокированный", 
@@ -367,6 +410,7 @@
       editedItem:{
         _id: null,
         lastname: null,
+        pawn: null,
         firstname: null,
         fathername: null,
         seriaAndNumberPassport: null,
@@ -398,6 +442,8 @@
         dateIssuedMenu: null,
         dateIssuedDate: null,
         brithday: null,
+        sallaryPerDay: null,
+        commissionPerTransacrion: null,
         issued: null,
         codePollicia: null,
         brithdaypicker: new Date().toISOString(),
@@ -449,7 +495,7 @@
           this.editedIndex = -1
         }, 300)
       },
-      save () {
+      save (id) {
           axios({
           method: 'post',
           url: 'http://localhost:8081/updateDriverData',
@@ -464,6 +510,7 @@
               phone: this.editedItem.phone,
               email: this.editedItem.email,
               inn: this.editedItem.inn,
+              pawn: this.editedItem.pawn,
               classInsurance: this.editedItem.classInsurance,
               numberDriverLicence: this.editedItem.numberDriverLicence,
               dateIssuedDriverLicenceMenu: this.editedItem.dateIssuedDriverLicenceMenu,
@@ -492,16 +539,31 @@
               dateIssuedPicker: this.editedItem.dateIssuedPicker,
               dateIssuedDriverLicencePicker: this.editedItem.dateIssuedDriverLicencePicker,
               status: this.editedItem.status,
+              sallaryPerDay: new String(this.editedItem.sallaryPerDay),
+              commissionPerTransacrion: new String(this.editedItem.commissionPerTransacrion),
               _id: this.$route.params.id
           }
         })
-      .then(function(){
-        console.log('SUCCESS!!')
-      })
-      .catch(function(){
-        console.log('FAILURE!!')
-      })
+      .then(response => {
+          response.data
+            this.ok = true
+            setTimeout(()=>{
+                        this.ok = false
+            }, 2000);
+            if(id === 1)
+            this.$router.push('/admin/UserDriverProfile/all')
+        })
+        .catch(error => {
+            console.log(error)
+        })
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>

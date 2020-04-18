@@ -18,6 +18,7 @@
       >
         <v-tab> Информация </v-tab>
         <v-tab> Регистрационные данные </v-tab>
+        <v-tab> Комисии </v-tab>
       </v-tabs>
     </v-toolbar>
     <v-tabs-items v-model="tabs">
@@ -447,7 +448,34 @@
     </v-container>
           </v-card-text>
         </v-card>
-        
+      </v-tab-item>
+            <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <template>
+                  <v-container>
+                        <v-row>
+                                      <v-col cols="12" md="8">
+                                      <v-text-field
+                                          v-model="editedItem.commissionPerDay"
+                                          :counter="16"
+                                          label="Коммисия за сутки в рублях"
+                                          required
+                                      ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="8">
+                                      <v-text-field
+                                          v-model="editedItem.commissionPerTransacrion"
+                                          :counter="16"
+                                          label="Коммисия за транзакцию в процентах"
+                                          required
+                                      ></v-text-field>
+                                      </v-col>
+                        </v-row>
+                  </v-container>
+            </template>
+            </v-card-text>
+        </v-card>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
@@ -541,7 +569,8 @@ import axios from "axios"
                 termValidityTODate: null,
                 dateIssuedSTDate: null,
                 picker: new Date().toISOString(),
-
+                commissionPerDay: null,
+                commissionPerTransacrion: null,
             }
       }
     },
@@ -641,6 +670,8 @@ import axios from "axios"
             termValidityTODate: this.editedItem.termValidityTODate,
             termValidityTOPicker: this.editedItem.termValidityTOPicker,
             dateIssuedSTDate: this.editedItem.dateIssuedSTDate,
+            commissionPerDay: this.editedItem.commissionPerDay,
+            commissionPerTransacrion: this.editedItem.commissionPerTransacrion,
             dateIssuedSTSPicker: this.editedItem.dateIssuedSTSPicker
           }
         })

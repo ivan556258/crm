@@ -6,8 +6,8 @@
         <v-spacer></v-spacer>
         
           <template>
-            <v-btn color="success" class="mb-2" @click="save()" >{{formAutoTitle}}</v-btn>
-            <v-btn color="primary" class="mb-2 ml-1" >{{formDriveTitle}}</v-btn>
+            <v-btn color="success" class="mb-2" @click="save(0)" >{{formAutoTitle}}</v-btn>
+            <v-btn color="primary" class="mb-2 ml-1" @click="save(1)" >{{formDriveTitle}}</v-btn>
           </template> 
     </v-toolbar>
 
@@ -21,6 +21,7 @@
       >
         <v-tab> Профиль водителя </v-tab>
         <v-tab> Настройки </v-tab>
+        <v-tab> Комисия/Зарплата </v-tab>
       </v-tabs>
     </v-toolbar>
 
@@ -274,6 +275,14 @@
             required
           ></v-text-field> 
          </v-col>
+         <v-col cols="12" md="6">
+          <v-text-field
+            v-model="pawn"
+            :counter="6"
+            label="Залог"
+            required
+          ></v-text-field> 
+         </v-col>
          <v-col cols="12" md="12">
           <v-toolbar-title>Дополнительные данные</v-toolbar-title>
          </v-col>
@@ -337,8 +346,41 @@
         </v-card>
         
       </v-tab-item>
+       <v-tab-item>
+        <v-card flat>
+          <v-card-text>
+            <template>
+                  <v-container>
+                        <v-row>
+                            <v-col cols="12" md="8">
+                            <v-text-field
+                                v-model="sallaryPerDay"
+                                :counter="16"
+                                label="Зарплата за сутки в рублях"
+                                required
+                            ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="8">
+                            <v-text-field
+                                v-model="commissionPerTransacrion"
+                                :counter="16"
+                                label="Коммисия за транзакцию в процентах (в парк)"
+                                required
+                            ></v-text-field>
+                            </v-col>
+                        </v-row>
+                  </v-container>
+            </template>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs-items>
   </v-card>
+      <div class="bottom-block-success" v-show="ok">
+        <v-alert type="success">
+          Данные добавлены
+        </v-alert>
+      </div>
 </template>
 </div>
 </template>
@@ -350,7 +392,9 @@
     data () {
       return {
         tabs: null,
+        pawn: null,
         lastname: null,
+        ok: false,
         firstname: null,
         fathername: null,
         seriaAndNumberPassport: null,
@@ -383,6 +427,8 @@
         dateIssuedDate: null,
         brithday: null,
         issued: null,
+        sallaryPerDay: null,
+        commissionPerTransacrion: null,
         codePollicia: null,
         brithdaypicker: new Date().toISOString(),
         dateIssuedPicker: new Date().toISOString(),
@@ -420,7 +466,7 @@
     methods: {
       initialize () {
       },
-      save () {
+      save (id) {
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertDriverData',
@@ -434,6 +480,7 @@
               isOwner: this.isOwner,
               phone: this.phone,
               email: this.email,
+              pawn: this.pawn,
               inn: this.inn,
               classInsurance: this.classInsurance,
               numberDriverLicence: this.numberDriverLicence,
@@ -458,6 +505,8 @@
               dateIssuedDate: this.dateIssuedDate,
               brithday: this.brithday,
               issued: this.issued,
+              sallaryPerDay: this.sallaryPerDay,
+              commissionPerTransacrion: this.commissionPerTransacrion,
               codePollicia: this.codePollicia,
               brithdaypicker: this.brithdaypicker,
               dateIssuedPicker: this.dateIssuedPicker,
@@ -466,13 +515,26 @@
               token: localStorage.getItem('auth')
           }
         })
-      .then(function(){
-        console.log('SUCCESS!!')
-      })
-      .catch(function(){
-        console.log('FAILURE!!')
-      })
+      .then(response => {
+          response.data
+            this.ok = true
+            setTimeout(()=>{
+                        this.ok = false
+            }, 2000);
+            if(id === 1)
+            this.$router.push('/admin/UserDriverProfile/all')
+        })
+        .catch(error => {
+            console.log(error)
+        })
       },
     },
   }
 </script>
+<style scoped>
+.bottom-block-success {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+}
+</style>
