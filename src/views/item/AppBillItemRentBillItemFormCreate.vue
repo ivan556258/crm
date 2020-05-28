@@ -61,14 +61,14 @@
               ></v-text-field> 
             </v-col>
           
-           <!--  <v-col v-if="blockSumm == 'за каждый день'" cols="12" md="8">
+           <v-col v-if="blockSumm == 'за каждый день'" cols="12" md="8">
               <v-text-field
                 v-model="editedItem.summPerDay"
                 :counter="10"
                 label="Сумма за каждый день"
                 required
               ></v-text-field> 
-            </v-col> -->
+            </v-col>
             <v-col v-if="blockSumm == 'понедельный'" cols="12" md="8">
               <v-row>
                 <v-col cols="12" md="4">
@@ -272,10 +272,6 @@
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
-      },
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
       },
       close () {
         this.dialog = false

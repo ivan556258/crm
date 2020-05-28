@@ -47,16 +47,48 @@
                         <v-select 
                               :items="tariff" 
                               :item-text="item => item.name"  
-                              item-value="_id" 
-                              v-model="editedItem.item" label="Статья"></v-select>
+                              item-value="type" 
+                              v-model="editedItem.item" label="Статья">
+                              <template v-slot:item="data">
+                                <template>
+                                <v-list-item-content>
+                                    <v-list-item-title @click="tariffFunc(data.item.name)">{{data.item.name}}</v-list-item-title>
+                                </v-list-item-content>
+                                </template>
+                              </template>
+                              </v-select>
                   </v-col>
-                  <v-col cols="12" md="8">
+                  <v-col v-if="findOwner" cols="12" md="8">
+                        <v-switch v-model="editedItem.ownerPay" class="ma-2" label="Поиск по владельцам"></v-switch>
+                  </v-col>
+                  <v-col v-if="editedItem.ownerPay == true" cols="12" md="8">
+                        <v-select
+                         :items="owners" 
+                         :item-text="item => item.name"  
+                         item-value="_id" 
+                         v-model="editedItem.ownerScore"
+                         label="Счёта владельцев">
+                        </v-select>
+                  </v-col>
+                  <v-col v-if="editedItem.ownerPay == false" cols="12" md="8">
+                              <v-radio-group v-model="editedItem.taxi" row>
+                              <v-radio
+                                label="Яндекс такси"
+                                value="Яндекс такси"
+                              ></v-radio>
+                              <v-radio
+                                label="Bolt"
+                                value="Bolt"
+                              ></v-radio>
+                            </v-radio-group>
+                  </v-col>
+                  <v-col v-if="editedItem.ownerPay == false" cols="12" md="8">
                         <v-select
                          :items="drivers" 
                          :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
                          item-value="_id" 
-                         v-model="editedItem.score"
-                         label="Счёт">
+                         v-model="editedItem.driverScore"
+                         label="Счёта водителей">
                         </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="8">
@@ -105,6 +137,7 @@ import axios from "axios"
     data: () => ({
       dialog: false,
       drivers: [],
+      owners: [],
       tariff: "",
       search: "",
       driverName: [],
@@ -126,15 +159,18 @@ import axios from "axios"
       ],
       desserts: [],
       editedIndex: -1,
+      findOwner: true,
       editedItem: {
         driverId: '',
+        ownerPay: false,
         scoreName: '',
         name: '',
         item: '',
-        score: '',
+        driverScore: '',
         summ: '',
         description: '',
         addTransaction: '',
+        taxi:'',
       },
     }),
     computed: {
@@ -152,18 +188,19 @@ import axios from "axios"
     },
     methods: {
       initialize () {
+// all transaction
         axios({
             method: "get",
             url:"http://localhost:8081/selectTransactionData?token="+localStorage.getItem('auth')
           })
           .then(response => {
-            console.log(response.data['0']);
             this.desserts = response.data
             
           })
           .catch(error => {
             console.log(error)
           })
+// drivers
           axios({
             method: "get",
             url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
@@ -174,6 +211,18 @@ import axios from "axios"
           .catch(error => {
             console.log(error)
           })
+// owners
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectOwnerData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.owners = response.data 
+          })
+          .catch(error => {
+            console.log(error)
+          })
+// accounts
            axios({
             method: "get",
             url:"http://localhost:8081/selectAccountBillItemData?token="+localStorage.getItem('auth')
@@ -185,11 +234,17 @@ import axios from "axios"
             console.log(error)
           })
       },
-      getColor (score) {
-        console.log(score);
-        
-        if (score === "Зарплата") return 'green'
+      getColor (driverScore) {        
+        if (driverScore === "Зарплата") return 'green'
         else return 'red'
+      },
+      tariffFunc(name){
+        console.log(name);
+        if (name == "Зарпалата за поездку") {
+          this.findOwner = false
+        } else {
+          this.findOwner = true
+        }
       },
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
@@ -224,7 +279,7 @@ import axios from "axios"
             url:"http://localhost:8081/updateTransactionData",
             data: {
                 item: this.editedItem.item,
-                score: this.editedItem.score,
+                driver: this.editedItem.driverScore,
                 summ: this.editedItem.summ,
                 description: this.editedItem.description,
                 addTransaction: this.editedItem.addTransaction,
@@ -233,12 +288,15 @@ import axios from "axios"
         })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
         } else {
+          console.table(this.editedItem);
           axios({
           method: 'post',
           url: 'http://localhost:8081/insertTransactionData',
           data: {
               item: this.editedItem.item,
-              score: this.editedItem.score,
+              ownerPay: this.editedItem.ownerPay,
+              scoreOwner: this.editedItem.scoreOwner,
+              score: this.editedItem.driverScore,
               summ: this.editedItem.summ,
               description: this.editedItem.description,
               addTransaction: this.editedItem.addTransaction,

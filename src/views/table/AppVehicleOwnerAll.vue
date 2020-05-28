@@ -24,7 +24,6 @@
       ></v-text-field>
     </v-card-title>
   </v-card>
-
         <v-spacer></v-spacer>
           <template>
             <v-btn color="primary" class="my-2 ml-1" to="/admin/VehicleOwner/create">{{formDriveTitle}}</v-btn>

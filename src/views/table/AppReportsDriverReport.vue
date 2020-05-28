@@ -12,9 +12,7 @@
         <v-spacer></v-spacer>
         
         <v-dialog v-model="dialog" max-width="100%">
-          <template v-slot:activator="{ on }">
-            
-          </template>
+ 
           
           <v-card>
             <v-card-title>

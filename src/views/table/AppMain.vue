@@ -1,5 +1,31 @@
 <template>
-  <v-data-table :headers="headers" :items="desserts" :search="search" sort-by="calories" class="elevation-1">
+  <v-data-table 
+  :headers="headers" 
+  :items="desserts" 
+  :search="search" 
+  sort-by="calories" 
+  class="elevation-1"
+  item-key="_id"
+  show-select
+  >
+  <template v-slot:item.tariffName="{ item }">
+     
+          <div v-if="item.tariffName === null">Индивидуальный</div>
+          <div v-else>{{item.tariffName}}</div>
+         
+  </template>
+    <template v-slot:item.balance="{ item }">
+          <div> {{getBalnce(item.driver)}}</div>
+  </template>
+
+  <template v-slot:item.pawn="{ item }">
+          <div>{{getPawn(item.driver)}}</div>
+  </template>
+
+  <template v-slot:item.penaltis="{ item }">
+          <div>{{getPenalty(item.driver)}}</div>
+  </template>
+
     <template v-slot:top>
       <v-toolbar-title class="ml-3 mt-2">Панель управления</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -8,7 +34,7 @@
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="headline mb-1 bg-style-job">Машин в работе</v-list-item-title>
-              <v-list-item-subtitle><span class="color-score">35</span></v-list-item-subtitle>
+              <v-list-item-subtitle><span class="color-score">{{autoCountWork}}</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -21,7 +47,7 @@
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="headline mb-1 bg-style-job">Свободно машин</v-list-item-title>
-              <v-list-item-subtitle><span class="color-score">10</span></v-list-item-subtitle>
+              <v-list-item-subtitle><span class="color-score">{{autoCountFree}}</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -35,7 +61,7 @@
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="headline mb-1 bg-style-job">Машин в обслуживании</v-list-item-title>
-              <v-list-item-subtitle><span class="color-score">0</span></v-list-item-subtitle>
+              <v-list-item-subtitle><span class="color-score">{{autoCountServiceTechnical}}</span></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
 
@@ -94,7 +120,7 @@
                   <v-col cols="12" sm="6" md="4">
                         <v-select 
                              :items="drivers" 
-                             :item-text="item => item.lastname +'  '+ item.firstname + '  ' + item.fathername"  
+                             :item-text="item => item.lastname +' '+ item.firstname + '  ' + item.fathername"  
                               item-value="_id" 
                               v-model="editedItem.driver" 
                               label="Водитель">
@@ -108,15 +134,6 @@
                         v-model="editedItem.auto" 
                         label="Автомобиль">
                     </v-select>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-select 
-                              :items="tariff" 
-                              :item-text="item => item.name"  
-                              item-value="_id" 
-                              @change="tariffFunc(item._id, item.name, item.tariff, item.tariff,)"
-                              v-model="editedItem.tariff" label="Тариф">
-                  </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                   <v-menu
@@ -171,19 +188,146 @@
                   </v-menu>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                     <v-switch v-model="editedItem.continues" class="ma-2" label="Продлеваемый"></v-switch>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.moreInfo" label="Дополнительная информация"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-select :items="status" v-model="editedItem.status" label="Статус"></v-select>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <v-col cols="12" sm="6" md="6">
+                     <v-switch v-model="editedItem.continues" class="ma-2" label="Продлеваемый"></v-switch>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
                       <v-switch @change="individualFunc()" v-model="editedItem.individual" class="ma-2" label="Индивидуальные комисии"></v-switch>
                   </v-col>
-                  <v-col v-if="editedItem.individual" cols="12" md="8">
-                      <v-select :items="selectTariff" @change="changeRoute()" v-model="editedItem.tariff" label="Тарифный план"></v-select>
+                  <v-col v-if="editedItem.individual" cols="12" md="6">
+                      <v-select :items="selectTariff" @change="changeRoute()" v-model="editedItem.tariffIndi" label="Тарифный план"></v-select>
+                  </v-col>
+            
+                  <v-col v-if="editedItem.tariffIndi == 'раз в месяц' && editedItem.individual" cols="12" md="8">
+              <v-text-field
+                v-model="editedItem.summPerMounth"
+                :counter="10"
+                label="Сумма за месяц"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+            </v-col>
+          
+           <v-col v-if="editedItem.tariffIndi == 'за каждый день' && editedItem.individual" cols="12" md="8">
+              <v-text-field
+                v-model="editedItem.summPerDay"
+                :counter="10"
+                label="Сумма за каждый день"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+            </v-col>
+            <v-col v-if="editedItem.tariffIndi == 'понедельный' && editedItem.individual" cols="12" md="8">
+              <v-row>
+                <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summMo"
+                :counter="10"
+                label="Пн"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+                </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summTu"
+                :counter="10"
+                label="Вт"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summWe"
+                :counter="10"
+                label="Ср"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summTh"
+                :counter="10"
+                label="Чт"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summFr"
+                :counter="10"
+                label="Пт"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summSa"
+                :counter="10"
+                label="Сб"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+          <v-col cols="12" md="4">
+              <v-text-field
+                v-model="editedItem.summSu"
+                :counter="10"
+                label="Вс"
+                @change="tariffIndividualFunc()"
+                required
+              ></v-text-field> 
+          </v-col>
+         
+                </v-row>
+            </v-col>
+            <v-col v-if="editedItem.individual === false" cols="12" sm="6" md="6">
+                 
+            <v-select
+              :disabled="isUpdating"
+              :items="tariff"
+              label="Тариф"
+              v-model="editedItem.tariffName"
+              item-text="name"
+            >
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                >
+                {{ data.item.name }}  
+                </v-chip>
+              </template>
+              <template v-slot:item="data">
+                
+                  <v-list-item-content>
+                    <v-list-item-title @click.capture="tariffFunc(
+                                data.item.name, 
+                                data.item.tariff, 
+                                data.item.summPerMounth,
+                                data.item.summPerDay,
+                                data.item.summMo,
+                                data.item.summTu,
+                                data.item.summWe,
+                                data.item.summTh,
+                                data.item.summFr,
+                                data.item.summSa,
+                                data.item.summSu,
+                                data.item.statusRes,
+                                )" v-html="data.item.name"></v-list-item-title>
+                  </v-list-item-content>
+              </template>
+            </v-select>
+             
                   </v-col>
                 </v-row>
               </v-container>
@@ -211,13 +355,20 @@ import axios from "axios"
 export default {
   name: "AppMain",
   data: () => ({
+    isUpdating: false,
+    autoCountFree: null,
+    autoCountWork: null,
+    autoCountServiceTechnical: null,
     dialog: false,
     picker: new Date().toISOString(),
-
+    penalty: [],
     auto: [],
     drivers: [],
     search: "",
-    status: "",
+    status:[
+        "Активный",
+        "Неактивный",
+      ],
     items: "",
     continues: false,
     headers: [
@@ -228,50 +379,77 @@ export default {
         value: "autoStr"
       },
       { text: "Водитель", value: "driverStr" },
-      { text: "Тариф", value: "tariffStr" },
+      { text: "Тариф", value: "tariffName" },
       { text: "Телефон", value: "driverPhone" },
       { text: "Баланс", value: "balance", sortable: false },
       { text: "Штрафы", value: "penaltis", sortable: false },
-      { text: "Депозит", value: "deposit", sortable: false },
-      { text: "Время", value: "time", sortable: false },
+      { text: "Депозит", value: "pawn", sortable: false },
+      { text: "Окончание договора", value: "enddate", sortable: false },
       { text: 'Действия', value: 'action', sortable: false },
     ],
     desserts: [],
     tariff: [],
     editedIndex: -1,
+    selectTariff:[
+            "за каждый день",
+            "раз в месяц",
+            "понедельный",
+        ],
     editedItem: {
       desserts:[],
       _id: null,
       beginmenu: null,
+      tariffIndi: null,
       individual: false,
       driverPhone: null,
       number: null,
+      balance: null,
       endmenu: null,
       enddate: null,
       begindate: null,
       moreInfo: null,
       auto: null,
       driver: null,
-      tariff: null,
+      tariff: [],
       autoStr: null,
       driverStr: null,
       tariffStr: null,
       status: null,
       continues: false,
       blockSumm: null,
+      selectTariff:[
+            "за каждый день",
+            "раз в месяц",
+            "понедельный",
+        ],
+      summPerMounth: '',
+      summPerDay: '',
+      summMo: '',
+      summTu: '',
+      summWe: '',
+      summTh: '',
+      summFr: '',
+      summSa: '',
+      summSu: '',
     },
     defaultItem: {
       _id: null,
       beginmenu: null,
       number: null,
       individual: false,
+      balance: null,
       endmenu: null,
       enddate: null,
+      selectTariff:[
+            "за каждый день",
+            "раз в месяц",
+            "понедельный",
+        ],
       begindate: null,
       moreInfo: null,
       auto: null,
       driver: null,
-      tariff: null,
+      tariffName: null,
       driverPhone: null,
       status: null,
       continues: false,
@@ -307,6 +485,34 @@ methods: {
           })
           .then(response => {
             this.desserts = response.data
+    // general data that are separated
+            for (let index = 0; index < response.data.length; index++) {
+              // individual can be as general list so and individal for each driver
+              // if from general list there just
+                if (response.data[index].individual === false) {
+                  this.desserts[index].tariffName = response.data[index].tariff[0].name
+              // but if contract individual for driver 
+              // mean fields need pick up 
+                } else {
+                  this.desserts[index].tariffIndi = response.data[index].tariff[0].tariff;
+                  this.desserts[index].tariffName = 'Индивидуальный'
+                          if (response.data[index].tariff[0].tariff == "за каждый день") {
+                            this.desserts[index].summPerDay = response.data[index].tariff[0].summPerDay
+                          }
+                          if (response.data[index].tariff[0].tariff == "раз в месяц") {
+                            this.desserts[index].summPerMounth = response.data[index].tariff[0].summPerMounth
+                          }
+                          if (response.data[index].tariff[0].tariff == "понедельный") {
+                            this.desserts[index].summMo = response.data[index].tariff[0].summMo
+                            this.desserts[index].summTu = response.data[index].tariff[0].summTu
+                            this.desserts[index].summWe = response.data[index].tariff[0].summWe
+                            this.desserts[index].summTh = response.data[index].tariff[0].summTh
+                            this.desserts[index].summFr = response.data[index].tariff[0].summFr
+                            this.desserts[index].summSa = response.data[index].tariff[0].summSa
+                            this.desserts[index].summSu = response.data[index].tariff[0].summSu
+                          }
+                }
+            }
           })
           .catch(error => {
             console.log(error)
@@ -320,8 +526,6 @@ methods: {
           })
           .then(response => {
             this.tariff = response.data
-            console.log(this.tariff);
-            
           })
           .catch(error => {
             console.log(error)
@@ -331,18 +535,20 @@ methods: {
 
           axios({
             method: "get",
-            url:"http://localhost:8081/selectDriverData?token="+localStorage.getItem('auth')
+            url:"http://localhost:8081/selectDriverData?free=1&token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.drivers = response.data 
+            
           })
           .catch(error => {
             console.log(error)
           })
 
+// automobiles 
           axios({
             method: "get",
-            url:"http://localhost:8081/selecAutomobileData?token="+localStorage.getItem('auth')
+            url:"http://localhost:8081/selectAutomobileData?free=1&token="+localStorage.getItem('auth')
           })
           .then(response => {
             this.auto = response.data
@@ -351,9 +557,135 @@ methods: {
             console.log(error)
           })
 
+// list counts automobiles 
+// FREE
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectAutomobileCountData?free=1&token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+                this.autoCountFree = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        
+// IN WORK
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectAutomobileCountData?free=0&token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+                this.autoCountWork = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
+// IN TECHNICAL SERVICE
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectAutomobileCountData?free=3&token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+                this.autoCountServiceTechnical = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+// THIS PENALTY
+          axios({
+            method: "get",
+            url:"http://localhost:8081/selectPenaltyData?token="+localStorage.getItem('auth')
+          })
+          .then(response => {
+            this.penalty = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+
       },
+    getBalnce(id){
+        // input array contain some elements. 
+        let array = this.drivers
+        // Here find function returns the value of the first element 
+        // in the array that satisfies the provided testing 
+        // function (return element > 10). 
+          for (var i=0; i < array.length; i++) {
+              if (array[i]._id == id) {
+                  return array[i].balance
+              }
+          }
+
+    },
+    getPawn(id){
+        // input array contain some elements. 
+        let array = this.drivers
+        // Here find function returns the value of the first element 
+        // in the array that satisfies the provided testing 
+        // function (return element > 10). 
+          for (var i=0; i < array.length; i++) {
+              if (array[i]._id == id) {
+                  return array[i].pawn
+              }
+          }
+    },
+    getPenalty(id){
+        // input array contain some elements. 
+        let array = this.penalty
+        // Here find function returns the value of the first element 
+        // in the array that satisfies the provided testing 
+        // function (return element > 10). 
+          for (var i=0; i < array.length; i++) {
+              if (array[i].score == id) {
+                  return array[i].summ
+              }
+          }
+    },
+    individualFunc(){
+            this.editedItem.selectTariff = [
+            "за каждый день",
+            "раз в месяц",
+            "понедельный",
+            ]
+    },
+    tariffFunc(name, tariff, summPerMounth, summPerDay, summMo, summTu, summWe, summTh, summFr,summSa, summSu, statusRes){
+        this.editedItem.tariff = []
+        this.editedItem.tariff.push({ 
+              name: name, 
+              tariff: tariff, 
+              summPerMounth: summPerMounth,
+              summPerDay: summPerDay,
+              summMo: summMo,
+              summTu: summTu,
+              summWe: summWe,
+              summTh: summTh,
+              summFr: summFr,
+              summSa: summSa,
+              summSu: summSu,
+              statusRes: statusRes,
+        })
+    },
     changeRoute(){
-            this.editedItem.blockSumm = this.editedItem.tariff
+            this.editedItem.blockSumm = this.editedItem.tariffName
+    },
+    tariffIndividualFunc(){
+        this.editedItem.tariff = []
+        this.editedItem.tariff.push({
+              name: "6544", 
+              tariff: this.editedItem.tariffIndi, 
+              summPerMounth: this.editedItem.summPerMounth,
+              summPerDay: this.editedItem.summPerDay,
+              summMo: this.editedItem.summMo,
+              summTu: this.editedItem.summTu,
+              summWe: this.editedItem.summWe,
+              summTh: this.editedItem.summTh,
+              summFr: this.editedItem.summFr,
+              summSa: this.editedItem.summSa,
+              summSu: this.editedItem.summSu,
+              statusRes: this.editedItem.statusRes,
+        })
     },
     editItem(item) {
       this.editedIndex = this.desserts.indexOf(item);
@@ -385,34 +717,36 @@ methods: {
             method: "post",
             url:"http://localhost:8081/updateContractData",
             data: {
-                number: this.editedItem.number,
                 driver: this.editedItem.driver,
                 auto: this.editedItem.auto,
-                tariff: this.editedItem.tariff,
                 begindate: this.editedItem.begindate,
                 enddate: this.editedItem.enddate,
-                continues: this.editedItem.continues,
                 moreInfo: this.editedItem.moreInfo,
                 status: this.editedItem.status,
+                continues: this.editedItem.continues,
+                individual: this.editedItem.individual,
+                tariff: JSON.stringify(this.editedItem.tariff),
                 _id: this.editedItem._id,
                  
             }
         })
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
       } else {
+        console.log(this.editedItem);
+        
         axios({
           method: 'post',
           url: 'http://localhost:8081/insertContractData',
           data: {
-            number: this.editedItem.number,
             driver: this.editedItem.driver,
             auto: this.editedItem.auto,
-            tariff: this.editedItem.tariff,
             begindate: this.editedItem.begindate,
             enddate: this.editedItem.enddate,
-            continues: this.editedItem.continues,
             moreInfo: this.editedItem.moreInfo,
             status: this.editedItem.status,
+            continues: this.editedItem.continues,
+            individual: this.editedItem.individual,
+            tariff: JSON.stringify(this.editedItem.tariff),
             token: localStorage.getItem('auth')
           }
         })
@@ -433,25 +767,38 @@ methods: {
 .bg-cover{
   background-size: cover
 }
-.bg-in-job-1{
-  background-color: rgb(220, 220, 220)!important;
-  border-color: rgb(220, 220, 220)
+.bg-in-job-1 {
+    background-image: linear-gradient(180deg,#fec134,#52af50);
+    border-color: rgb(220, 220, 220);
+    background-color: white;
 }
 .bg-in-job-2{
-  background-color: rgb(220, 220, 220)!important;
-  border-color: rgb(220, 220, 220)
+    background-image: linear-gradient(180deg,#fec134,#52af50);
+    border-color: rgb(220, 220, 220);
+    background-color: white;
 }
 .bg-in-job-3{
-  background-color: rgb(220, 220, 220)!important;
-  border-color: rgb(220, 220, 220)
+    background-image: linear-gradient(180deg,#fec134,#52af50);
+    border-color: rgb(220, 220, 220);
+    background-color: white;
 }
 .bg-in-job-4{
-  background-color: rgb(220, 220, 220)!important;
-  border-color: rgb(38, 198, 218)
+    background-image: linear-gradient(180deg,#fec134,#52af50);
+    border-color: rgb(220, 220, 220);
+    background-color: white;
 }
-.bg-style-job{
-    color: rgb(123, 109, 109);
-    font-weight: bold!important
+.bg-style-job {
+    color: rgb(255, 255, 255);
+    font-weight: bold!important;
+    text-shadow: 2px 1px 6px #bda8a8;
+}
+.theme--light.v-card.v-card--outlined {
+    border: none;
+}
+.color-score {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: white;
 }
 .search {
     border: 0!important;

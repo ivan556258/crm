@@ -39,13 +39,6 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                 <v-col cols="12" md="8">
-                        <v-select 
-                              :items="tariff" 
-                              :item-text="item => item.name"  
-                              item-value="_id" 
-                              v-model="editedItem.item" label="Статья"></v-select>
-                  </v-col>
                   <v-col cols="12" md="8">
                         <v-select
                          :items="drivers" 
@@ -193,7 +186,7 @@ import axios from "axios"
             url:"http://localhost:8081/deletePenaltyData",
             data: {
                  _id: item._id,
-                 
+                 token: localStorage.getItem('auth'),
             }
         })
       },

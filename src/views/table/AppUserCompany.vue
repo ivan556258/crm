@@ -20,7 +20,7 @@
       >
         <v-tab> Компания </v-tab>
         <v-tab> SMS </v-tab>
-        <v-tab> Яндекс.Такси </v-tab>
+        <v-tab> Агрегаторы </v-tab>
         <v-tab> Договор проката </v-tab>
         <v-tab> Акт возврата автомобиля </v-tab>
         <v-tab> Обжалование </v-tab>
@@ -159,6 +159,9 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
+          <v-col cols="12" md="12">
+                <v-toolbar-title>ЯНДЕКС.ТАКСИ</v-toolbar-title>
+          </v-col>
         <v-col cols="12" md="8">
           <v-text-field
             v-model="editedItem.APIYandexKey"
@@ -184,7 +187,26 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="8">
+          <v-text-field
+            v-model="editedItem.yandexTaxiCommission"
+            :counter="16"
+            label="Комиссия ЯНДЕКС.ТАКСИ"
+            required
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="8">
              <v-select :items="status" v-model="editedItem.scoreYandexAPI" label="Счет для Яндекс API"></v-select>
+        </v-col>
+          <v-col cols="12" md="12">
+                <v-toolbar-title>BOLT</v-toolbar-title>
+          </v-col>
+          <v-col cols="12" md="8">
+          <v-text-field
+            v-model="editedItem.boltTaxiCommission"
+            :counter="16"
+            label="Комиссия BOLT"
+            required
+          ></v-text-field>
         </v-col>
           </v-card-text>
         </v-card>
@@ -242,7 +264,12 @@
                   <v-container>
                         <v-row>
                             <v-col cols="12" md="8">
-                              
+                                <v-text-field
+                                    v-model="editedItem.commission"
+                                    :counter="16"
+                                    label="Комиися за транзакцию"
+                                    required
+                                ></v-text-field>
                             </v-col>
                         </v-row>
                   </v-container>
@@ -394,6 +421,8 @@ import axios from "axios";
                 informNeedChangeOli: this.editedItem.informNeedChangeOli,
                 templeteSMSFoo: this.editedItem.templeteSMSFoo,
                 templeteSMSFive: this.editedItem.templeteSMSFive,
+                yandexTaxiCommission: this.editedItem.yandexTaxiCommission,
+                boltTaxiCommission: this.editedItem. boltTaxiCommission,
                 token: localStorage.getItem('auth'),
                 _id: this.editedItem._id
             }
@@ -430,6 +459,8 @@ import axios from "axios";
                 informNeedChangeOli: this.editedItem.informNeedChangeOli,
                 templeteSMSFoo: this.editedItem.templeteSMSFoo,
                 templeteSMSFive: this.editedItem.templeteSMSFive,
+                yandexTaxiCommission: this.editedItem.yandexTaxiCommission,
+                boltTaxiCommission: this.editedItem. boltTaxiCommission,
                 _id: this.editedItem._id,
                 token: localStorage.getItem('auth')
             }
